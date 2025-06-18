@@ -2,7 +2,7 @@
 
 ## Installation
 ```bash
-git clone https://github.com/it-bulka/node-microservices-test
+git clone https://github.com/it-bulka/rd-node
 cd hw-1
 npm install
 ```
