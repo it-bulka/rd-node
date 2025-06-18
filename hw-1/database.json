@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f9f69025-a24b-42aa-8c87-0fd93712f63a",
+    "name": "read smth",
+    "frequency": "daily",
+    "createdAt": 1750268369003,
+    "doneDates": []
+  },
+  {
+    "id": "2c6f293f-6eae-461c-960b-dd99d5ca2cec",
+    "name": "tomorrow",
+    "frequency": "monthly",
+    "createdAt": 1750700462349,
+    "doneDates": []
+  }
+]
