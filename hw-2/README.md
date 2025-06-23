@@ -57,6 +57,7 @@ For convenience in requests methods, the request object (`req`) is augmented wit
 - `body`
 - `prams`
 - `query`
+and the response object (`res`) is augmented with additional properties:
 - `answer`
 
 ##### Details:
