@@ -2,6 +2,18 @@
 
 This project implements a file system-based router similar to the Next.js App Router, built with plain Node.js.
 
+## Installation
+```bash
+git clone https://github.com/it-bulka/rd-node
+cd hw-2
+npm install
+```
+
+## Start
+```
+npm run start
+```
+
 ## Structure
 
 - All route handlers are located in the `routes/` directory.
