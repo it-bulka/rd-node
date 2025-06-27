@@ -3,12 +3,12 @@ This project demonstrates working with Docker by creating and managing container
 
 ## Installation
 ```bash
-git clone https://github.com/it-bulka/rd-node
-cd hw-3
-npm install
+    git clone https://github.com/it-bulka/rd-node
+    cd hw-3
+    npm install
 ```
 
-### 🧱 Structure
+### Structure
 
 - **Main goal**: Practicing containerization using Docker.
 - **Services**:
@@ -47,10 +47,10 @@ node index.js <command> [options]
 ```
 ## Commands list:
 ### Commands for working with `docker-compose.yml`
-| Command                                                                   | Description                                |
-|---------------------------------------------------------------------------|--------------------------------------------|
-| `docker-compose up`                                                       | run __**docker-compose.yml**__             |
-| `npm run down`                                                            | Display all habits in a table              |
+| Command               | Description                                       |
+|-----------------------|---------------------------------------------------|
+| `docker-compose up`   | run __**docker-compose.yml**__                    |
+| `docker-compose down` | deleting container running by `docker-compose up` |
 
 
 ### Commands for working with `miniCompose.js`
@@ -80,5 +80,4 @@ node index.js <command> [options]
 - **Path Parameters**: <br>
   `key` – key from `key:value` pair of object you send in body in `POST /kv` endpoint
 
-## `kv-service` details
 
