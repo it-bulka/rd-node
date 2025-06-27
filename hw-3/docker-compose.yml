@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  redis:
+    build:
+      context: './redis-like'
+      dockerfile: 'redis.Dockerfile'
+    container_name: 'redis'
+    networks:
+      - 'internal'
+
+  kv:
+    depends_on: [redis]
+    build:
+      context: './kv-server'
+      dockerfile: 'kv.Dockerfile'
+    networks:
+      - 'internal'
+    ports:
+      - '3000:3000'
+    environment:
+      REDIS_URL: http://redis:4000
+      NODE_ENV: 'production'
+
+networks:
+  internal:
+    driver: bridge

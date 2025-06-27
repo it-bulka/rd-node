@@ -1,0 +1,4 @@
+{
+  "ignore": ["src/store.js"],
+  "delay": 2500
+}

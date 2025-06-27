@@ -1,0 +1,24 @@
+{
+  "network": "internal",
+  "services": {
+    "redis": {
+      "build": {
+        "context": "./redis-like",
+        "dockerfile": "redis.Dockerfile"
+      },
+      "image": " <hub-username>/node-base:18",
+      "ports": { "4000": "4000" },
+      "env":   { "NODE_ENV": "prod" }
+    },
+    "kv": {
+      "build": {
+        "context": "./kv-server",
+        "dockerfile": "kv.Dockerfile"
+      },
+      "depends_on": ["redis"],
+      "ports": { "3000": "3000" },
+      "volumes": { "./kv-server/src": "/usr/src/app/src" },
+      "env": { "REDIS_URL": "http://redis:4000", "NODE_ENV": "production" }
+    }
+  }
+}
