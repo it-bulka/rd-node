@@ -12,7 +12,6 @@ export class BrewsModel {
   }
 
   all(filters: BrewFilters): BrewFull[] {
-    console.log('filters', filters)
     const fullList = [...this.#store.values()]
     return this._filter(fullList, filters)
   }
