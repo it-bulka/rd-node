@@ -39,9 +39,9 @@
   "main": "./src/server.ts",
   "type": "module",
   "scripts": {
-    "type-check": "cross-env NODE_ENV=dev npx tsc --noEmit ./src/server.ts",
+    "type-check": "cross-env NODE_ENV=dev npx tsc --noEmit --project tsconfig.json",
     "dev": "cross-env NODE_ENV=dev nodemon --exec tsx ./src/server.ts",
-    "build": "npx tsc --noEmit ./src/server.ts && node build.mjs",
+    "build": "cross-env NODE_ENV=prod npx tsc --noEmit --project tsconfig.json && node build.mjs",
     "start": "node dist/server.mjs",
     "lint": "npx eslint ./src/server.ts"
   },
