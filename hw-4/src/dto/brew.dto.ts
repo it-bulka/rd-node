@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { registry } from '@/openapi/registry.ts'
 
 export const brewDto = z.object({
   beans: z.string().min(3).max(40),
@@ -24,5 +25,9 @@ export const brewQuerySchema = z.object({
 export type BrewDto = z.infer<typeof brewDto>
 export type BrewFull = z.infer<typeof brewFull>
 export type BrewFilters = z.infer<typeof brewQuerySchema>
+
+registry.register('BrewDto', brewDto)
+registry.register('BrewParams', brewParamsSchema)
+registry.register('BrewQuery', brewQuerySchema)
 
 

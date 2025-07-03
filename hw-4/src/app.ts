@@ -1,13 +1,16 @@
-import type { IncomingMessage as IM, ServerResponse as  SR } from 'http'
 import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import compression from 'compression'
 import rateLimit from 'express-rate-limit'
 import { scopePerRequest } from 'awilix-express'
+import swaggerUi from 'swagger-ui-express'
+
+import { config } from '@/config'
+import { setLogger } from '@/utils/setLogger.ts'
 import { container } from './container'
 import brewsRoutes from './routes/brews.routes'
-
+import { geterateZodSpec } from '@/docs/openapi.ts'
 import { errorHandler, notFound } from '@/middleware'
 
 export const createApp = async () => {
@@ -23,30 +26,7 @@ export const createApp = async () => {
   }))
   app.use(compression())
 
-  let morgan
-  let pinoHttp
-  if (process.env.NODE_ENV === 'dev') {
-    morgan = (await import('morgan')).default
-    app.use(morgan('dev'))
-  }
-
-  if (process.env.NODE_ENV === 'prod') {
-    const pino = (await import('pino')).default
-    pinoHttp = (await import('pino-http')).default
-
-    const logger = pino({ level: 'info' })
-
-    app.use(pinoHttp({
-      logger,
-      customLogLevel: (_req: IM, res: SR, err?: Error) => {
-        if (res.statusCode >= 500 || err) return 'error'
-        if (res.statusCode >= 400) return 'warn'
-        return 'info'
-      },
-      autoLogging: true,
-    }))
-  }
-
+  await setLogger(app, config.env)
 
   app.use(express.json())
   app.use(express.urlencoded({ extended: false }))
@@ -54,6 +34,12 @@ export const createApp = async () => {
   app.use(scopePerRequest(container))
 
   app.use('/api/brews', brewsRoutes)
+
+  if (config.env === 'dev') {
+    const baseUrl = `${config.baseUrl}/api`
+    app.use('/docs', swaggerUi.serve, swaggerUi.setup(geterateZodSpec(baseUrl)));
+    console.log(`Swagger docs → ${config.baseUrl}/docs`);
+  }
 
   app.use(notFound)
   app.use(errorHandler)

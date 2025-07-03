@@ -27,7 +27,7 @@ export class BrewsController {
 
   create: Controller<any,ResponseBody<BrewFull>, BrewDto> = (req, res) => {
     const brew = this.brewsService.createOne(req.body)
-    return res.status(200).json({ success: true, data: brew })
+    return res.status(201).json({ success: true, data: brew })
   }
 
   update: Controller<{ id: string }, ResponseBody<BrewFull | null>, BrewDto> = (req, res) => {
