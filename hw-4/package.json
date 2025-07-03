@@ -41,7 +41,8 @@
   "scripts": {
     "type-check": "cross-env NODE_ENV=dev npx tsc --noEmit --project tsconfig.json",
     "dev": "cross-env NODE_ENV=dev nodemon --exec tsx ./src/server.ts",
-    "build": "cross-env NODE_ENV=prod npx tsc --noEmit --project tsconfig.json && node build.mjs",
+    "bundle": "cross-env NODE_ENV=prod node build.mjs",
+    "build": "npm run type-check && npm run bundle",
     "start": "node dist/server.mjs",
     "lint": "npx eslint ./src/server.ts",
     "docker:build": "docker build -t brew-api .",
