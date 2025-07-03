@@ -43,9 +43,11 @@
     "dev": "cross-env NODE_ENV=dev nodemon --exec tsx ./src/server.ts",
     "build": "cross-env NODE_ENV=prod npx tsc --noEmit --project tsconfig.json && node build.mjs",
     "start": "node dist/server.mjs",
-    "lint": "npx eslint ./src/server.ts"
+    "lint": "npx eslint ./src/server.ts",
+    "docker:build": "docker build -t brew-api .",
+    "docker:run": "docker run -p 3000:3000 brew-api"
   },
   "author": "IT.bulka",
   "license": "ISC",
-  "description": ""
+  "description": "Brew storing"
 }
