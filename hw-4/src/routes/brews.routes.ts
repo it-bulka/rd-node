@@ -19,7 +19,7 @@ router.use('/:id', validateParams(brewParamsSchema))
 router.route('/:id')
   .get(cls('findOne'))
   .delete(cls('deleteOne'))
-  .post(validate(brewDto), cls('update'))
+  .put(validate(brewDto), cls('update'))
 
 /**
  * OpenAPI
@@ -93,7 +93,7 @@ registry.registerPath({
 
 registry.registerPath({
   path: `${PATH}/{id}`,
-  method: 'post',
+  method: 'put',
   tags: ['Brews'],
   operationId: 'updateBrewById',
   summary: 'Update Brew by ID (update full body)',
