@@ -9,6 +9,7 @@ import { setupSwagger } from '@docs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks()
 
   app.use(helmet())
   app.use(rateLimit(rateLimitConfig))

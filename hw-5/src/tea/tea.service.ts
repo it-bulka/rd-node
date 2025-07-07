@@ -1,16 +1,24 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { CreateTeaDto } from './dto/create-tea.dto';
 import { UpdateTeaDTO } from './dto/update-tea.dto';
 import { TeaEntity } from './entities/tea.entity';
 import { Tea } from './schemas/tea.schema';
 import { QueryGetAllDto } from './dto/query-get-all.dto';
+import { ConsoleLogger } from '@nestjs/common';
 
 type PaginateArg = { list: Tea[], pageSize?: number, page?: number}
 type PaginatedTea = { data: Tea[], pageSize?: number, page?: number, total: number };
 
 @Injectable()
-export class TeaService {
-  constructor(private readonly teaEntity: TeaEntity) {}
+export class TeaService implements OnApplicationShutdown {
+  constructor(
+    private readonly teaEntity: TeaEntity,
+    private readonly logger: ConsoleLogger,
+  ) {}
+
+  async onApplicationShutdown() {
+    this.logger.log('Bye tea‑lovers 👋')
+  }
 
   async getAll({ minRating, page, pageSize }: QueryGetAllDto = {}): Promise<PaginatedTea> {
     let list = this.teaEntity.getAll();
