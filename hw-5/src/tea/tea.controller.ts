@@ -21,6 +21,7 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiBadRequestResponse,
+  ApiSecurity
 } from '@nestjs/swagger';
 import { TeaService } from './tea.service';
 import { CreateTeaDto, CreateTeaSchema } from './dto/create-tea.dto';
@@ -62,6 +63,7 @@ export class TeaController {
   }
 
   @Get(':id')
+  @ApiSecurity('x-api-key')
   @ApiParam(ApiParamIdSwagger)
   @ApiOkResponse({ type: TeaDtoSwagger, description: 'Founded Tea by ID' })
   @ApiNotFoundResponse({ description: 'Tea not found' })
@@ -77,6 +79,7 @@ export class TeaController {
   @Post()
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(CreateTeaSchema))
+  @ApiSecurity('x-api-key')
   @ApiBody({ type: CreateTeaDtoSwagger })
   @ApiCreatedResponse({
     type: TeaDtoSwagger,
@@ -89,6 +92,7 @@ export class TeaController {
 
   @Patch(':id')
   @UsePipes(new ZodValidationPipe(UpdateTeaSchema))
+  @ApiSecurity('x-api-key')
   @ApiBody({ type: UpdateTeaDtoSwagger })
   @ApiParam(ApiParamIdSwagger)
   @ApiOkResponse({
@@ -107,6 +111,7 @@ export class TeaController {
   }
 
   @Delete(':id')
+  @ApiSecurity('x-api-key')
   @ApiParam(ApiParamIdSwagger)
   @ApiOkResponse({ description: 'Tea deleted successfully' })
   async delete(@Param('id') id: string) {
