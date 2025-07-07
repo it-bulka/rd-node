@@ -1,10 +1,16 @@
 import {
   Controller,
-  Get, Post, Delete, Patch,
+  Get,
+  Post,
+  Delete,
+  Patch,
   HttpCode,
-  Body, Param,
-  UsePipes, UseGuards,
-  NotFoundException, Query
+  Body,
+  Param,
+  UsePipes,
+  UseGuards,
+  NotFoundException,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -13,7 +19,8 @@ import {
   ApiTags,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiNotFoundResponse, ApiBadRequestResponse
+  ApiNotFoundResponse,
+  ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { TeaService } from './tea.service';
 import { CreateTeaDto, CreateTeaSchema } from './dto/create-tea.dto';
@@ -23,8 +30,12 @@ import { AuthGuard } from '@guards/auth.guard';
 import { Public } from '../shared/decorators/public.decorator';
 import { QueryGetAllSchema, QueryGetAllDto } from './dto/query-get-all.dto';
 import {
-  CreateTeaDtoSwagger, UpdateTeaDtoSwagger, QueryGetAllDtoSwagger, ApiParamIdSwagger,
-  TeaDtoSwagger, zodValidationError
+  CreateTeaDtoSwagger,
+  UpdateTeaDtoSwagger,
+  QueryGetAllDtoSwagger,
+  ApiParamIdSwagger,
+  TeaDtoSwagger,
+  zodValidationError,
 } from '@docs/schemas';
 
 @UseGuards(AuthGuard)
@@ -37,13 +48,16 @@ export class TeaController {
   @Public()
   @UsePipes(new ZodValidationPipe(QueryGetAllSchema))
   @ApiQuery({ type: QueryGetAllDtoSwagger })
-  @ApiOkResponse({ type: [TeaDtoSwagger], description: 'Paginated and filtrated Tea list' })
+  @ApiOkResponse({
+    type: [TeaDtoSwagger],
+    description: 'Paginated and filtrated Tea list',
+  })
   @ApiBadRequestResponse(zodValidationError)
   async getAll(@Query() query: QueryGetAllDto) {
     return this.teaService.getAll({
       minRating: query.minRating,
       pageSize: query.pageSize,
-      page: query.page
+      page: query.page,
     });
   }
 
@@ -52,44 +66,50 @@ export class TeaController {
   @ApiOkResponse({ type: TeaDtoSwagger, description: 'Founded Tea by ID' })
   @ApiNotFoundResponse({ description: 'Tea not found' })
   async getById(@Param('id') id: string) {
-    const data = await this.teaService.getById(id)
+    const data = await this.teaService.getById(id);
 
-    if(!data) {
-      throw new NotFoundException(`Tea with ID ${id} not found`)
+    if (!data) {
+      throw new NotFoundException(`Tea with ID ${id} not found`);
     }
-    return data
+    return data;
   }
 
   @Post()
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(CreateTeaSchema))
   @ApiBody({ type: CreateTeaDtoSwagger })
-  @ApiCreatedResponse({ type: TeaDtoSwagger, description: 'Tea created successfully' })
+  @ApiCreatedResponse({
+    type: TeaDtoSwagger,
+    description: 'Tea created successfully',
+  })
   @ApiBadRequestResponse(zodValidationError)
   async create(@Body() tea: CreateTeaDto) {
-    return this.teaService.create(tea)
+    return this.teaService.create(tea);
   }
 
   @Patch(':id')
   @UsePipes(new ZodValidationPipe(UpdateTeaSchema))
   @ApiBody({ type: UpdateTeaDtoSwagger })
   @ApiParam(ApiParamIdSwagger)
-  @ApiOkResponse({ type: TeaDtoSwagger, description: 'Tea updated successfully' })
+  @ApiOkResponse({
+    type: TeaDtoSwagger,
+    description: 'Tea updated successfully',
+  })
   @ApiNotFoundResponse({ description: 'Tea not found' })
   @ApiBadRequestResponse(zodValidationError)
   async update(@Param('id') id: string, @Body() tea: UpdateTeaDTO) {
-    const data = await this.teaService.update(id, tea)
+    const data = await this.teaService.update(id, tea);
 
-    if(!data) {
-      throw new NotFoundException(`Tea with ID ${id} not found`)
+    if (!data) {
+      throw new NotFoundException(`Tea with ID ${id} not found`);
     }
-    return data
+    return data;
   }
 
   @Delete(':id')
   @ApiParam(ApiParamIdSwagger)
   @ApiOkResponse({ description: 'Tea deleted successfully' })
   async delete(@Param('id') id: string) {
-    await this.teaService.deleteById(id)
+    await this.teaService.deleteById(id);
   }
 }

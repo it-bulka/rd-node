@@ -6,7 +6,7 @@ export class TeaDtoSwagger extends CreateTeaDtoSwagger {
     description: 'ID of the tea',
     minLength: 32,
     maxLength: 32,
-    example: 'klhjyuiokll-jkghfgrtfgvhjklkijuh'
+    example: 'klhjyuiokll-jkghfgrtfgvhjklkijuh',
   })
-  id: string
+  id: string;
 }

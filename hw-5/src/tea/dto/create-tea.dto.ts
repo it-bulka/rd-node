@@ -6,6 +6,6 @@ export const CreateTeaSchema = z.object({
   rating: z.number().min(1).max(20).optional(),
   brewTemp: z.number().min(60).max(100).optional(),
   notes: z.string().max(150).optional(),
-})
+});
 
-export type CreateTeaDto = z.infer<typeof CreateTeaSchema>
+export type CreateTeaDto = z.infer<typeof CreateTeaSchema>;

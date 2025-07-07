@@ -3,4 +3,4 @@ export const rateLimitConfig = {
   limit: 10,
   standardHeaders: true,
   legacyHeaders: false,
-}
+};

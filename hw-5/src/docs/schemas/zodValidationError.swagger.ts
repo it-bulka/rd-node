@@ -10,9 +10,9 @@ export const zodValidationError = {
           type: 'object',
           properties: {
             path: { type: 'array', items: { type: 'string' } },
-            message: { type: 'string' }
-          }
-        }
+            message: { type: 'string' },
+          },
+        },
       },
       error: { type: 'string', example: 'Bad Request' },
       where: {

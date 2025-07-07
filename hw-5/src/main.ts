@@ -9,15 +9,15 @@ import { setupSwagger } from '@docs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableShutdownHooks()
+  app.enableShutdownHooks();
 
-  app.use(helmet())
-  app.use(rateLimit(rateLimitConfig))
-  app.use(compression())
+  app.use(helmet());
+  app.use(rateLimit(rateLimitConfig));
+  app.use(compression());
 
-  app.useGlobalInterceptors(app.get(LoggingInterceptor))
+  app.useGlobalInterceptors(app.get(LoggingInterceptor));
 
-  setupSwagger(app)
+  setupSwagger(app);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
