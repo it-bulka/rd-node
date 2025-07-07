@@ -11,7 +11,8 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@config/*": ["./src/shared/config/*"],
+      "@config/*": ["./src/config/*"],
+      "@docs/*": ["./src/docs/*"],
       "@pipes/*": ["./src/shared/pipes/*"],
       "@guards/*": ["./src/shared/guards/*"],
       "@interceptors/*": ["./src/shared/interceptors/*"],
