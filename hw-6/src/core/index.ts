@@ -1,0 +1,1 @@
+export { TypeTransform, UsePipes } from './decorators';
