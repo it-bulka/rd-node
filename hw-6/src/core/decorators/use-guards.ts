@@ -1,5 +1,4 @@
-import { ClassType } from '@core/types'
-import { ExecutionContext } from '@core/utils/execution-context'
+import { ClassType, ExecutionContext } from '@core/types'
 
 export interface CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean>
