@@ -3,4 +3,5 @@ export const META_KEYS = {
   routes: 'routes',
   params: 'params',
   module: 'module',
+  token_injection: 'token-injection',
 } as const
