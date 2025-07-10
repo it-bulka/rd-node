@@ -62,8 +62,8 @@ export class NestFactory {
 
         this.#router[route.method](
           path,
-          asyncHandler(GuardsMiddleware(handler)),
-          asyncHandler(PipeMiddleware(handler)),
+          asyncHandler(GuardsMiddleware(Ctr, handler, this.globalGuards)),
+          asyncHandler(PipeMiddleware(controllerInstance, handler, this.globalPipes)),
           asyncHandler(FiltersMiddleware(handler)),
         )
       })
