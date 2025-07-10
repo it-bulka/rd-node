@@ -1,11 +1,10 @@
 import { META_KEYS } from '../consts'
-
-type Methods = 'get' | 'post' | 'put' | 'patch' | 'delete'
+import { Methods, RoutesMetadata } from '@core/types'
 
 function Route(method: Methods, path: string = ''): MethodDecorator {
   return function (target, propertyKey, descriptor) {
-    const paths = Reflect.getMetadata(META_KEYS.routes, target.constructor) || []
-    paths.push({ method, path, handlerName: propertyKey })
+    const paths: RoutesMetadata = Reflect.getMetadata(META_KEYS.routes, target.constructor) || []
+    paths.push({ method, path, handlerName: propertyKey as string })
 
     Reflect.defineMetadata(META_KEYS.routes, paths, target.constructor)
   }

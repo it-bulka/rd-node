@@ -6,6 +6,15 @@ export interface ClassType<T = any> extends Function {
   new (...args: any[]): T;
 }
 
+export type Methods = 'get' | 'post' | 'put' | 'patch' | 'delete'
+export type ModuleType = { controllers: any[], providers: any[], imports?: ModuleType[], exports: ModuleType[] };
+
+export type RoutesMetadata = {
+  method: Methods,
+  path: string,
+  handlerName: string
+}[]
+
 export interface ArgumentMetadata {
   readonly index: number;             // args index in method
   readonly type: Paramtype;           // location

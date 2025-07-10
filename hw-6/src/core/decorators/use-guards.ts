@@ -4,7 +4,7 @@ export interface CanActivate {
   canActivate(context: ExecutionContext): boolean | Promise<boolean>
 }
 
-type GuardType = ClassType<CanActivate> | InstanceType<ClassType<CanActivate>>
+export type GuardType = ClassType<CanActivate> | InstanceType<ClassType<CanActivate>>
 
 const GUARD_METADATA = Symbol('guard')
 

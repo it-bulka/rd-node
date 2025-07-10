@@ -4,7 +4,7 @@ export interface ExceptionFilter<T = any> {
   catch(exception: T, host: ArgumentHost): void
 }
 
-type FilterType = ClassType<ExceptionFilter> | InstanceType<ClassType<ExceptionFilter>>
+export type FilterType = ClassType<ExceptionFilter> | InstanceType<ClassType<ExceptionFilter>>
 
 const FILTER_METADATA = Symbol('filter')
 

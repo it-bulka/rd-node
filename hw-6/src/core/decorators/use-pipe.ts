@@ -4,7 +4,7 @@ export interface TypeTransform<T = any, R = any> {
   transform(value: T, metadata: ArgumentMetadata): R | Promise<R>
 }
 
-type PipeType = ClassType<TypeTransform> | InstanceType<ClassType<TypeTransform>>
+export type PipeType = ClassType<TypeTransform> | InstanceType<ClassType<TypeTransform>>
 
 const PIPES_METADATA = Symbol('pipes')
 
