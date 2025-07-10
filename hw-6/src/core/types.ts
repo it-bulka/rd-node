@@ -24,9 +24,9 @@ export interface ArgumentMetadata {
 }
 
 export interface ArgumentHost {
-  switchToHttp() : {
-    getRequest() : Request
-    getResponse() : Response
+  switchToHttp: () => {
+    getRequest: () => Request
+    getResponse: () => Response
   }
 }
 

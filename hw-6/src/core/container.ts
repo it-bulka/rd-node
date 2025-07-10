@@ -1,10 +1,10 @@
 import { ClassType } from './types'
 
 class Container {
-  #singletones = new Map();
-  #registered = new Map();
+  #singletones = new Map<any, InstanceType<ClassType>>();
+  #registered = new Map<any, ClassType>();
 
-  register<T extends Function>(token: T, member: T) {
+  register<T extends ClassType>(token: T, member: T) {
     if(this.#registered.get(token)) throw new Error('Token already registered');
     this.#registered.set(token, member);
   }
