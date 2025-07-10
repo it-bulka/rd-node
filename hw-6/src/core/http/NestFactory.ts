@@ -49,7 +49,6 @@ export class NestFactory {
     if (!metamodule) return
 
     for (let Ctr of metamodule.controllers) {
-      // TODO: add register via Inject(token)
       container.register(Ctr, Ctr, true)
 
       const prefix: string = getMeta(META_KEYS.prefix, Ctr)
