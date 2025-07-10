@@ -6,8 +6,26 @@ export interface ClassType<T = any> extends Function {
   new (...args: any[]): T;
 }
 
+export type Token = string | Symbol | Function
+
+export type Provider =
+  | { useClass: ClassType, provider: Token }   // provider = key (token) for search
+  | { useValue: any, provider: Token }
+
+// for root container
+export type InstanceWrapper<T = any> = {
+  instance?: T
+  isResolved?: boolean                    // if instance created
+  isController?: boolean                  // needed for http
+} & Provider
+
 export type Methods = 'get' | 'post' | 'put' | 'patch' | 'delete'
-export type ModuleType = { controllers: any[], providers: any[], imports?: ModuleType[], exports: ModuleType[] };
+export type ModuleType = {
+  controllers: ClassType[],
+  providers: (Provider | ClassType)[],
+  imports?: ModuleType[],
+  exports: ModuleType[]
+}
 
 export type RoutesMetadata = {
   method: Methods,

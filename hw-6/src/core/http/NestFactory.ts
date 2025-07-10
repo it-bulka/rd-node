@@ -45,12 +45,12 @@ export class NestFactory {
   proccesControllers(module: ModuleType) {
     const getMeta = Reflect.getMetadata
 
-    const metamodule = getMeta(META_KEYS.module, module)
+    const metamodule: ModuleType = getMeta(META_KEYS.module, module)
     if (!metamodule) return
 
     for (let Ctr of metamodule.controllers) {
       // TODO: add register via Inject(token)
-      container.register(Ctr, Ctr)
+      container.register(Ctr, Ctr, true)
 
       const prefix: string = getMeta(META_KEYS.prefix, Ctr)
       const routes: RoutesMetadata = getMeta(META_KEYS.routes, Ctr)
