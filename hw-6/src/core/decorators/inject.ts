@@ -1,6 +1,7 @@
 import { META_KEYS } from '@core/consts'
+import { ClassType, Token } from '@core/types'
 
-type InjectionMetadata = {
+export type InjectionMetadata = {
   where: 'constructor'
   token: string | Symbol
   index: number
@@ -30,4 +31,17 @@ export function Inject(token: string | Symbol): ParameterDecorator & PropertyDec
       Reflect.defineMetadata(META_KEYS.token_injection, injections, target)
     }
   }
+}
+
+export function getConstructorInjectionTokensMap(cls: ClassType) {
+  const injectionMetas: InjectionMetadata[] = Reflect.getMetadata('injection-tokens', cls) || []
+  const injectionTokensMap: Record<number, Token> = {}
+
+  for (const meta of injectionMetas) {
+    if (meta.where === 'constructor') {
+      injectionTokensMap[meta.index] = meta.token;
+    }
+  }
+
+  return injectionTokensMap
 }
