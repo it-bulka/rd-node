@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { StoreModule } from '@/store/store.module';
 import { ConfigModule } from '@nestjs/config';
+import { ChatsModule } from './chats/chats.module';
 
 @Module({
   imports: [
@@ -9,7 +10,8 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true
     }),
     StoreModule,
-    UsersModule
+    UsersModule,
+    ChatsModule
   ],
   controllers: [],
   providers: [],
