@@ -3,6 +3,7 @@ import { UsersModule } from './users/users.module';
 import { StoreModule } from '@/store/store.module';
 import { ConfigModule } from '@nestjs/config';
 import { ChatsModule } from './chats/chats.module';
+import { MessagesModule } from '@/messages/messages.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { ChatsModule } from './chats/chats.module';
     }),
     StoreModule,
     UsersModule,
-    ChatsModule
+    ChatsModule,
+    MessagesModule
   ],
   controllers: [],
   providers: [],
