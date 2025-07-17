@@ -16,12 +16,13 @@ export class ChatsService {
     if(!name && members.length === 2) {
       chatName = await this.generateChatNameForTwo(members)
     };
-
-    return await this.store.chats.createOne({
+    const createdChat = await this.store.chats.createOne({
       name: chatName || v4(),
       members,
       updatedAt: new Date().toISOString(),
     })
+
+    return createdChat
   }
 
   async getUserChats(userId: string) {

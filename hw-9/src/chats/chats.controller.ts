@@ -4,22 +4,32 @@ import {
   Param,
   Body,
   HttpCode,
-  UseGuards
+  UseGuards,
+  Req,
+  InternalServerErrorException
 } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { ChatBodyDTO, ChatMenageMembersDTO } from './dto';
 import { ChatNamePipe } from '@/chats/pipes/chatName.pipe';
 import { RoleGuard } from '@/shared/guards';
+import { WsService } from '@/ws/ws.service';
 
 @Controller('chats')
 export class ChatsController {
-  constructor(private readonly chatsService: ChatsService) {}
+  constructor(
+    private readonly chatsService: ChatsService,
+    private readonly wsService: WsService,
+  ) {}
 
   @UseGuards(RoleGuard('creator'))
   @Post()
   async createChat(
-    @Body(new ChatNamePipe()) body: ChatBodyDTO ) {
+    @Body(new ChatNamePipe()) body: ChatBodyDTO,
+    @Req() req: any
+  ) {
     const chat = await this.chatsService.createChat(body)
+    this.wsService.notifyChatCreated(req.user, chat)
+
     return {
       id: chat.id,
       members: chat.members,
@@ -42,7 +52,12 @@ export class ChatsController {
     @Param('id') id: string,
     @Body() body: ChatMenageMembersDTO
   ) {
-    return await this.chatsService.manageChatMembers(id, body)
+    const chat = await this.chatsService.manageChatMembers(id, body)
+    if (!chat) {
+      throw new InternalServerErrorException()
+    }
+    this.wsService.notifyMembersUpdated(chat.id, { chatId: chat.id, members: chat.members })
+    return chat
   }
 
   @UseGuards(RoleGuard('admin'))

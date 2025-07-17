@@ -11,10 +11,11 @@ export function RoleGuard(roles: Roles | Roles[]): Type<CanActivate> {
       const xUser = req.headers['x-user']
 
       const hasRoles = Array.isArray(roles) ? roles.length > 0 : !!roles;
-      if(hasRoles && !xUser) {
+      if(hasRoles && (!xUser || typeof xUser !== 'string')) {
         throw new ForbiddenException('Access denied');
       }
 
+      req.user = xUser as string;
       return true;
     }
   }
