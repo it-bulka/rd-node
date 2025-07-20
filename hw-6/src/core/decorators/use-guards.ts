@@ -40,7 +40,7 @@ export async function runGuards(
   const guards: GuardType[] = getGuards(handler, controllerClass, globalGuards)
 
   for (const GuardCtor of guards) {
-    const guardInstance = container.resolve<CanActivate>(GuardCtor);
+    const guardInstance = container.resolve(GuardCtor);
     const ctx = new ExpressExecutionContext(controllerClass, handler, req, res)
 
     const can = await Promise.resolve( guardInstance.canActivate(ctx) )

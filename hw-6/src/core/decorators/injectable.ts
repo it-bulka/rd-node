@@ -1,7 +1,8 @@
 import { container } from '../container';
+import { ClassType } from '@core/types';
 
 export function Injectable(): ClassDecorator {
-  return function (target){
-    container.register(target, target)
+  return function (target: Function) {
+    container.register(target, target as ClassType)
   }
 }

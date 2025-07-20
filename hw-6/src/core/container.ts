@@ -32,6 +32,7 @@ class Container {
 
     if('useClass'  in wrapper) {
       const deps = this.resolveConstructorDeps(wrapper.useClass, wrapper.provider)
+
       return new wrapper.useClass(...deps)
     }
   }
@@ -52,6 +53,12 @@ class Container {
     if('useValue' in provider) return provider
     if('useClass' in provider) return provider
 
+    if(!isController) {
+      return {
+        provider,
+        useClass: provider
+      }
+    }
     // if controllers: [Class] or providers: [Class]
     return {
       provider,

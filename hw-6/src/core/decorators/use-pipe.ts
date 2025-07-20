@@ -48,7 +48,7 @@ export const runPipes = async ({
   let transformed = value
 
   for (const PipeCtor of pipes) {
-    const pipeInstance = isClass(PipeCtor) ? container.resolve<TypeTransform>(PipeCtor) : PipeCtor;
+    const pipeInstance = isClass(PipeCtor) ? container.resolve(PipeCtor) : PipeCtor;
 
     transformed = await Promise.resolve(
       pipeInstance.transform(transformed, meta)

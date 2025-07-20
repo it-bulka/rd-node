@@ -1,1 +1,6 @@
-export { TypeTransform, UsePipes } from './decorators';
+export {
+  type TypeTransform,
+  Injectable,
+  UsePipes
+} from './decorators'
+export { Module } from '@core/decorators/module'

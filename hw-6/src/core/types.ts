@@ -23,8 +23,8 @@ export type Methods = 'get' | 'post' | 'put' | 'patch' | 'delete'
 export type ModuleType = {
   controllers: ClassType[],
   providers: (Provider | ClassType)[],
-  imports?: ModuleType[],
-  exports: ModuleType[]
+  imports?: ClassType[],
+  exports?: ClassType[]
 }
 
 export type RoutesMetadata = {
