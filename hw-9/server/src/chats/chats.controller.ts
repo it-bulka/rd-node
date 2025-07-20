@@ -8,6 +8,7 @@ import {
   Req,
   InternalServerErrorException
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ChatsService } from './chats.service';
 import { ChatBodyDTO, ChatMenageMembersDTO } from './dto';
 import { ChatNamePipe } from '@/chats/pipes/chatName.pipe';
@@ -27,7 +28,7 @@ export class ChatsController {
     @Body(new ChatNamePipe()) body: ChatBodyDTO,
     @Req() req: any
   ) {
-    const chat = await this.chatsService.createChat(body)
+    const chat = await this.chatsService.createChat(req.user, body)
     this.wsService.notifyChatCreated(req.user, chat)
 
     return {
@@ -39,10 +40,8 @@ export class ChatsController {
 
   @UseGuards(RoleGuard(['admin', 'creator']))
   @Get()
-  async getUserChats() {
-    // TODO: user ID ?
-    const userId = '988d8d2c-ab21-42af-bef8-e1180b91ccfe'
-    const chats = await this.chatsService.getUserChats(userId)
+  async getUserChats(@Req() req: Request) {
+    const chats = await this.chatsService.getUserChats(req.user!)
     return { items: chats }
   }
 
@@ -56,6 +55,7 @@ export class ChatsController {
     if (!chat) {
       throw new InternalServerErrorException()
     }
+    console.log('notifyMembersUpdated', chat)
     this.wsService.notifyMembersUpdated(chat.id, { chatId: chat.id, members: chat.members })
     return chat
   }

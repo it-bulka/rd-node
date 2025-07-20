@@ -29,7 +29,8 @@ export class UsersController {
 
   @Get()
   async getAll() {
-    return await this.usersService.getAllUsers()
+    const list = await this.usersService.getAllUsers()
+    return { items: list }
   }
 
   @Get(':id/icon')

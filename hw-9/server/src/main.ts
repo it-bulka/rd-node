@@ -4,11 +4,21 @@ import { AppModule } from './app.module';
 import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { STATIC_FOLDER_NAME, STATIC_FOLDER_PREFIX } from '@/consts';
+import { setLoggering } from '@/utils';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const config = app.get(ConfigService);
 
-  app.enableCors()
+  setLoggering(app)
+  app.enableCors({
+    origin: config.getOrThrow('CLIENT_ORIGIN'),
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization, X-User',
+    maxAge: 600, // cash preflight for 10 min
+  })
   app.setGlobalPrefix('api',{
       exclude: [
         { path: 'docs', method: RequestMethod.ALL },
@@ -24,6 +34,9 @@ async function bootstrap() {
     transform: true,
   }));
 
-  await app.listen(process.env.PORT ?? 3000);
+  const PORT = config.getOrThrow('PORT') ?? 3000
+  await app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+  });
 }
 bootstrap();

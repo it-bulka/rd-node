@@ -4,11 +4,11 @@ import {
   SubscribeMessage,
   ConnectedSocket,
   MessageBody,
-  WebSocketServer, OnGatewayDisconnect
+  WebSocketServer, OnGatewayDisconnect, OnGatewayInit
 } from '@nestjs/websockets';
 import { WsService } from './ws.service';
 import { OnModuleDestroy, OnModuleInit  } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Socket, Server  } from 'socket.io';
 import { MessagesService } from '@/messages/messages.service';
 import { ChatDTO } from '@/dto';
 import { Subject, filter } from 'rxjs';
@@ -27,9 +27,9 @@ enum WS_EVENTS {
 }
 
 @WebSocketGateway({ path: '/ws', cors: true })
-export class ChatGateway implements OnModuleInit, OnModuleDestroy, OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Socket;
+  server: Server;
 
   private sub: Redis
   private event$ = new Subject<{ ev: WS_EVENTS; data: any; meta?: any }>()
@@ -66,6 +66,9 @@ export class ChatGateway implements OnModuleInit, OnModuleDestroy, OnGatewayConn
       this.server.to(data.chatId).emit(data)
     })
   }
+  afterInit(server: Server) {
+    this.wsService.setSocketServer(this.server);
+  }
 
   handleConnection(client: Socket): any {
     const user = client.handshake.auth?.user as string;
@@ -88,11 +91,14 @@ export class ChatGateway implements OnModuleInit, OnModuleDestroy, OnGatewayConn
   }
 
   @SubscribeMessage(WS_EVENTS.JOIN)
-  onJoin(
+  async onJoin(
     @ConnectedSocket() client: Socket,
     @MessageBody() body: { chatId: string }
   ) {
-    client.join(body.chatId)
+    console.log('onJoin', body)
+    await client.join(body.chatId)
+    const room = this.server.sockets.adapter.rooms.get(body.chatId);
+    console.log('onJoin Sockets in room', room);
 
     this.event$.next({
       ev: WS_EVENTS.JOIN,

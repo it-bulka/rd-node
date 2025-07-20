@@ -7,8 +7,8 @@ export class ChatsModel extends BaseDBModule<ChatDTO> {
     super(MODELS_PATHS.chats);
   }
 
-  async getAllByUserId(userId: string) {
+  async getAllByUserName(userName: string) {
     const all = await this.getAll()
-    return all.filter(item => item.members.includes(userId))
+    return all.filter(item => item.members.includes(userName))
   }
 }

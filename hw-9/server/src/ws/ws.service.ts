@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { Store } from '@/store/store.service';
 import { WebSocketServer } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import { ChatDTO } from '@/dto';
+import { Subject } from 'rxjs';
+
 
 @Injectable()
 export class WsService {
-  @WebSocketServer()
-  private server: Socket;
-  private userSockets = new Map<string, Set<string>>();
-  constructor() {}
+  private server: Server;
+  private userSockets = new Map<string, Set<string>>();constructor() {}
+
+  setSocketServer(socketServer: Server): void {
+    console.log('[WS] Server injected:', !!socketServer)
+    this.server = socketServer
+  }
 
   addSocket(userId: string, socketId: string) {
     if (!this.userSockets.has(userId)) {
@@ -37,7 +41,11 @@ export class WsService {
   }
 
   notifyMembersUpdated(chatId: string, payload: { chatId: string, members: string[] }) {
+    console.log('notifyMembersUpdated [WS] Server injected:', !!chatId);
+    const room = this.server.sockets.adapter.rooms.get(chatId);
+    console.log(`Sockets in room ${chatId}:`, room);
     this.server.to(chatId).emit('membersUpdated', payload);
+    console.log('Rooms at set time:', Array.from(this.server.sockets.adapter.rooms.entries()));
   }
 
   notifyChatCreated(userId: string, payload: ChatDTO) {
