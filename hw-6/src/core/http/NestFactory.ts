@@ -1,4 +1,4 @@
-import express, { Router, Express } from 'express'
+import express, { Router, Express, RequestHandler } from 'express'
 import { META_KEYS } from '@core/consts'
 import { ClassType, ModuleType, RoutesMetadata } from '@core/types'
 import { FilterType, PipeType, GuardType, assertIsController } from '@core/decorators'
@@ -17,31 +17,44 @@ export class NestFactory {
   protected globalPipes: PipeType[] = []
   protected globalFilters: FilterType[] = []
 
-  private static instance: NestFactory | null = null
-  private constructor() {}
+  private customMiddlewares: RequestHandler[] = []
 
+  private static instance: NestFactory | null = null
+  private constructor() {
+    this.proccessCustomMiddlewares()
+    this.proccessGlobalTopMiddlewares()
+  }
 
   static create(appModule: ClassType) {
     if (!NestFactory.instance) NestFactory.instance = new NestFactory()
     const instance = NestFactory.instance
-
-    try {
-      const modules = modulesCollector.collect(appModule)
-      modules.forEach((m) => instance.proccesControllers(m)) // not to lose this at proccesControllers
-      instance.#app.use(instance.#router)
-    } catch (err) {
-      console.log('Invalid Structure Error:', err)
-      process.exit(1)
-    }
 
     return {
       useGlobalGuards: (...guards: GuardType[]): void => { instance.globalGuards.push(...guards) },
       useGlobalPipes: (...pipes: PipeType[]): void => { instance.globalPipes.push(...pipes) },
       useGlobalFilters: (...filters: FilterType[]): void => { instance.globalFilters.push(...filters) },
       set: instance.#app.set.bind(instance.#app),
-      use: instance.#app.use.bind(instance.#app),
-      listen: instance.#app.listen.bind(instance.#app),
-      get: instance.#app.get.bind(instance.#app)
+      use: instance.use.bind(instance),
+      get: instance.#app.get.bind(instance.#app),
+      listen: (...args: Parameters<Express['listen']>) => {
+        instance.proccessCustomMiddlewares()
+        instance.proccessGlobalTopMiddlewares()
+        instance.initCore(appModule)            // call location to maintain order of middleware (cors, morgan, json etc. and after all that handlers)
+
+        const fn = instance.#app.listen.bind(instance.#app)
+        return fn(...args)
+      },
+    }
+  }
+
+  initCore(appModule: ClassType) {
+    try {
+      const modules = modulesCollector.collect(appModule)
+      modules.forEach((m) => this.proccesControllers(m)) // not to lose this at proccesControllers
+      this.#app.use(this.#router)
+    } catch (err) {
+      console.log('Invalid Structure Error:', err)
+      process.exit(1)
     }
   }
 
@@ -75,5 +88,18 @@ console.log('handler', handler)
         )
       })
     }
+  }
+
+  proccessGlobalTopMiddlewares() {
+    this.#app.use(express.json())
+    this.#app.use(express.urlencoded({ extended: true }))
+  }
+
+  proccessCustomMiddlewares() {
+    this.customMiddlewares.map((arg) => this.#app.use(arg))
+  }
+
+  use(arg: RequestHandler){
+    this.customMiddlewares.push(arg)
   }
 }

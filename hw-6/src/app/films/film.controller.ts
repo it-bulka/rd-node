@@ -13,4 +13,9 @@ export class FilmController {
   getById(@Param('filmId') filmId: string) {
     return this.filmService.getById(Number(filmId))
   }
+
+  @Post()
+  create(@Body() film: any) {
+    return this.filmService.create(film)
+  }
 }
