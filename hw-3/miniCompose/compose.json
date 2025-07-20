@@ -16,9 +16,19 @@
         "dockerfile": "kv.Dockerfile"
       },
       "depends_on": ["redis"],
-      "ports": { "3000": "3000" },
-      "volumes": { "./kv-server/src": "/usr/src/app/src" },
+      "ports": { "8080": "3000" },
+      "volumes": {},
       "env": { "REDIS_URL": "http://redis:4000", "NODE_ENV": "production" }
+    },
+    "kv.dev": {
+      "build": {
+        "context": "./kv-server",
+        "dockerfile": "kv.dev.Dockerfile"
+      },
+      "depends_on": ["redis"],
+      "ports": { "8081": "3000" },
+      "volumes": { "./kv-server/src": "/usr/src/app/src" },
+      "env": { "REDIS_URL": "http://redis:4000", "NODE_ENV": "development" }
     }
   }
 }

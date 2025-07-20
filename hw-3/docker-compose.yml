@@ -17,10 +17,24 @@ services:
     networks:
       - 'internal'
     ports:
-      - '3000:3000'
+      - '8080:3000'
     environment:
       REDIS_URL: http://redis:4000
       NODE_ENV: 'production'
+  kv.dev:
+    depends_on: [redis]
+    build:
+      context: '/kv-server'
+      dockerfile: 'kv.dev.Dockerfile'
+    networks:
+      - 'internal'
+    ports:
+      - '8081:3000'
+    environment:
+      REDIS_URL: http://redis:4000
+      NODE_ENV: 'development'
+    volumes:
+      - ./kv-server/src:/app/src
 
 networks:
   internal:

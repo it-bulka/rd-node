@@ -54,13 +54,14 @@ node index.js <command> [options]
 
 
 ### Commands for working with `miniCompose.js`
-| Command              | Description                                                                                                                                 |
-|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
-| `npm run up`         | runs docker commands for working with services form compose.json <br>(build and run containers `kv` & `redis`, create network, stream logs) |
-| `npm run down`       | stops and removes created containers, described in compose.json                                                                             |
+| Command              | Description                                                                                                                                           |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `npm run up`         | runs docker commands for working with services form compose.json <br>(build and run containers `kv`, `kv.dev` & `redis`, create network, stream logs) |
+| `npm run down`       | stops and removes created containers, described in compose.json                                                                                       |
 
-## Port
- - `3000`
+## Ports
+ - `8080` - for `kv` (container for production)
+ - `8081` - for `kv.dev` (container for development, hot-reload with nodemon)
 ## Available Endpoints 
 
 ### POST /kv
