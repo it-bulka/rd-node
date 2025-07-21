@@ -27,11 +27,12 @@ export type ModuleType = {
   exports?: ClassType[]
 }
 
-export type RoutesMetadata = {
+export type RouteMeta = {
   method: Methods,
   path: string,
   handlerName: string
-}[]
+}
+export type RoutesMetadata = RouteMeta[]
 
 export interface ArgumentMetadata {
   readonly index: number;             // args index in method

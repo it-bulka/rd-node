@@ -11,6 +11,10 @@ class Container {
     this.#registered.set(token, wrapper);
   }
 
+  isRegistered(token: Token): boolean {
+    return this.#registered.has(token);
+  }
+
   resolve(token: Token): InstanceType<ClassType> {
     const wrapper = this.#registered.get(token)
     if(!wrapper) {

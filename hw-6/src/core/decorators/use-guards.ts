@@ -11,8 +11,8 @@ export type GuardType = ClassType<CanActivate>
 
 const GUARD_METADATA = Symbol('guard')
 
-export function UseGuards(guards: GuardType[]): ClassDecorator | MethodDecorator {
-  return function (target, propertyKey) {
+export function UseGuards(...guards: GuardType[]): ClassDecorator & MethodDecorator {
+  return function (target: any, propertyKey?: string | symbol) {
     const where = propertyKey ? (target as any)[propertyKey] : target;
     Reflect.defineMetadata(GUARD_METADATA, guards, where)
   }
@@ -40,11 +40,18 @@ export async function runGuards(
   const guards: GuardType[] = getGuards(handler, controllerClass, globalGuards)
 
   for (const GuardCtor of guards) {
-    const guardInstance = container.resolve(GuardCtor);
-    const ctx = new ExpressExecutionContext(controllerClass, handler, req, res)
+    try {
+      if (!container.isRegistered(GuardCtor)) container.register(GuardCtor, GuardCtor);
 
-    const can = await Promise.resolve( guardInstance.canActivate(ctx) )
-    if (!can) return GuardCtor.name
+      const guardInstance = container.resolve(GuardCtor);
+      const ctx = new ExpressExecutionContext(controllerClass, handler, req, res)
+
+      const can = await Promise.resolve( guardInstance.canActivate(ctx) )
+      if (!can) return GuardCtor.name
+    } catch (err) {
+      console.error(`Guard ${GuardCtor.name} threw an error:`, err)
+      throw err
+    }
   }
   return true
 }

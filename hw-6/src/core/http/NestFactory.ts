@@ -7,7 +7,7 @@ import { asyncHandler } from '@core/http/aync.handler'
 import { GuardsMiddleware } from '@core/http/guards.middleware'
 import { FiltersMiddleware } from '@core/http/filters.middleware'
 import { PipeMiddleware } from '@core/http/pipes.middleware'
-import { errorHandler, modulesCollector, notFound } from '@core/utils'
+import { errorHandler, modulesCollector, notFound, sortRoutes } from '@core/utils'
 
 export class NestFactory {
   #app: Express = express()
@@ -74,7 +74,7 @@ export class NestFactory {
       const routes: RoutesMetadata = getMeta(META_KEYS.routes, Ctr) || []
 
       const controllerInstance = container.resolve(Ctr)
-      routes?.forEach(route => {
+      routes?.sort(sortRoutes).forEach(route => {
         const handler = (controllerInstance as any)[route.handlerName]
         let additionalPath = route.path.startsWith('/') ? route.path : `/${route.path}`
         let path = prefix + additionalPath
