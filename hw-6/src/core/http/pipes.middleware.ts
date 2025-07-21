@@ -3,6 +3,7 @@ import { runPipes, PipeType } from '@core/decorators'
 import { ArgumentMetadata, ClassType } from '@core/types'
 import { extractParams } from '@core/utils'
 import { META_KEYS } from '@core/consts'
+import { HttpException } from '@core';
 
 class PipeError extends Error {
   constructor(message: string) {
@@ -30,7 +31,10 @@ const getHandlerArgs = async (controller: Function, handler: Function, req: Requ
         globalPipes
       });
     } catch (error: any) {
-      throw new PipeError(`Pipe error for: ${error.message}`);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new PipeError(error.message || error);
     }
   }
 

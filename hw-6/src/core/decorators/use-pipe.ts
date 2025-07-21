@@ -11,8 +11,8 @@ export type PipeType = ClassType<TypeTransform> | InstanceType<ClassType<TypeTra
 const PIPES_METADATA = Symbol('pipes')
 
 // on class or method
-export function UsePipes(...pipes: PipeType[]): ClassDecorator | MethodDecorator {
-  return function (target, propertyKey) {
+export function UsePipes(...pipes: PipeType[]): ClassDecorator & MethodDecorator {
+  return function (target: any, propertyKey?: string | symbol) {
     const where = propertyKey ? (target as any)[propertyKey] : target;
     Reflect.defineMetadata(PIPES_METADATA, pipes, where)
   }

@@ -1,6 +1,7 @@
 import { TypeTransform, UsePipes } from '@core';
 import { ArgumentMetadata } from '@core/types';
 import { ZodType } from 'zod';
+import { BadRequestException } from '@core';
 
 export class ZodValidation<T> implements TypeTransform {
   constructor(private readonly zodSchema: ZodType<T>) {}
@@ -14,13 +15,11 @@ export class ZodValidation<T> implements TypeTransform {
         message: err.message,
       }));
 
-
-      //TODO: BadRequestException instead of Error
-      throw new Error(JSON.stringify({
+      throw new BadRequestException({
         message: 'Validation failed',
         errors: formattedErr,
         where: type,
-      }))
+      });
     }
 
     return result.data;
