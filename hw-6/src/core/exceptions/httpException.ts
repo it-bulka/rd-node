@@ -15,8 +15,8 @@ export type HttpExceptionArgs = [
 ]
 
 export class HttpException extends Error {
-  protected response: HttpExceptionRes
-  protected statusCode: StatusCode
+  response: HttpExceptionRes
+  statusCode: StatusCode
 
   constructor(...args: HttpExceptionArgs) {
     const [response, statusCode, option ] = args

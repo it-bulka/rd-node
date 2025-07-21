@@ -1,8 +1,14 @@
 import { StatusCodes } from 'http-status-codes'
-import { HttpException, type HttpExceptionArgs } from './httpException';
+import { HttpException, type HttpExceptionRes, type StatusCode, type HttpExceptionCause } from './httpException';
+
+type ExceptionArgs = [
+  response: HttpExceptionRes,
+  statusCode?: StatusCode,
+  options?: HttpExceptionCause
+]
 
 export class BadRequestException extends HttpException {
-  constructor(...args: HttpExceptionArgs) {
+  constructor(...args: ExceptionArgs) {
     const [res, statusCode, options] = args
     super(res, statusCode || StatusCodes.BAD_REQUEST, options)
 
@@ -11,7 +17,7 @@ export class BadRequestException extends HttpException {
 }
 
 export class UnauthorizedException extends HttpException {
-  constructor(...args: HttpExceptionArgs) {
+  constructor(...args: ExceptionArgs) {
     const [res, statusCode, options] = args
     super(res, statusCode || StatusCodes.UNAUTHORIZED, options)
 
@@ -20,7 +26,7 @@ export class UnauthorizedException extends HttpException {
 }
 
 export class ForbiddenException extends HttpException {
-  constructor(...args: HttpExceptionArgs) {
+  constructor(...args: ExceptionArgs) {
     const [res, statusCode, options] = args
     super(res, statusCode || StatusCodes.FORBIDDEN, options)
 
@@ -29,7 +35,7 @@ export class ForbiddenException extends HttpException {
 }
 
 export class NotFoundException extends HttpException {
-  constructor(...args: HttpExceptionArgs) {
+  constructor(...args: ExceptionArgs) {
     const [res, statusCode, options] = args
     super(res, statusCode || StatusCodes.NOT_FOUND, options)
 
@@ -38,7 +44,7 @@ export class NotFoundException extends HttpException {
 }
 
 export class TooManyRequestsException extends HttpException {
-  constructor(...args: HttpExceptionArgs) {
+  constructor(...args: ExceptionArgs) {
     const [res, statusCode, options] = args
     super(res, statusCode || StatusCodes.TOO_MANY_REQUESTS, options)
 
@@ -47,7 +53,7 @@ export class TooManyRequestsException extends HttpException {
 }
 
 export class InternalServerErrorException extends HttpException {
-  constructor(...args: HttpExceptionArgs) {
+  constructor(...args: ExceptionArgs) {
     const [res, statusCode, options] = args
     super(res, statusCode || StatusCodes.INTERNAL_SERVER_ERROR, options)
 
