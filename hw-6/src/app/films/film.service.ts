@@ -1,4 +1,5 @@
 import { Injectable } from '@core'
+import { FilmDto } from './dto/film.dto';
 
 @Injectable()
 export class FilmService{
@@ -10,7 +11,7 @@ export class FilmService{
     return { data: 'film', id: id }
   }
 
-  create(film: any){
+  create(film: FilmDto){
     return { data: film }
   }
 }

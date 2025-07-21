@@ -1,5 +1,8 @@
 import { Controller, Get, Post, Param, Body } from '@core/decorators'
 import { FilmService } from './film.service'
+import { FilmSchema } from './dto/film.dto';
+
+import { ZodValidationPipe } from '../shared/pipes';
 
 @Controller('/films')
 export class FilmController {
@@ -15,6 +18,7 @@ export class FilmController {
   }
 
   @Post()
+  @ZodValidationPipe(FilmSchema)
   create(@Body() film: any) {
     return this.filmService.create(film)
   }
