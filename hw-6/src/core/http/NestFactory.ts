@@ -7,7 +7,7 @@ import { asyncHandler } from '@core/http/aync.handler'
 import { GuardsMiddleware } from '@core/http/guards.middleware'
 import { FiltersMiddleware } from '@core/http/filters.middleware'
 import { PipeMiddleware } from '@core/http/pipes.middleware'
-import { errorHandler, modulesCollector } from '@core/utils'
+import { errorHandler, modulesCollector, notFound } from '@core/utils'
 
 export class NestFactory {
   #app: Express = express()
@@ -40,6 +40,7 @@ export class NestFactory {
         instance.proccessCustomMiddlewares()
         instance.proccessGlobalTopMiddlewares()
         instance.initCore(appModule)            // call location to maintain order of middleware (cors, morgan, json etc. and after all that handlers)
+        instance.#app.use(notFound)
         instance.#app.use(errorHandler)
 
         const fn = instance.#app.listen.bind(instance.#app)
