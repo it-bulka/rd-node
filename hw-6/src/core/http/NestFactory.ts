@@ -3,7 +3,6 @@ import { META_KEYS } from '@core/consts'
 import { ClassType, ModuleType, RoutesMetadata } from '@core/types'
 import { FilterType, PipeType, GuardType, assertIsController } from '@core/decorators'
 import { container } from '@core/container'
-import { asyncHandler } from '@core/http/aync.handler'
 import { GuardsMiddleware } from '@core/http/guards.middleware'
 import { FiltersMiddleware } from '@core/http/filters.middleware'
 import { PipeMiddleware } from '@core/http/pipes.middleware'
@@ -82,12 +81,12 @@ export class NestFactory {
 console.log('path', path)
 console.log('handlerName', route.handlerName)
 console.log('handler', handler)
-        this.#router[route.method](
-          path,
-          asyncHandler(GuardsMiddleware(Ctr, handler, this.globalGuards)),
-          asyncHandler(PipeMiddleware(controllerInstance, handler, this.globalPipes)),
-          asyncHandler(FiltersMiddleware(handler)),
-        )
+
+        const handlersChain = [
+          GuardsMiddleware(Ctr, handler, this.globalGuards),
+          PipeMiddleware(controllerInstance, handler, this.globalPipes)
+        ]
+        this.#router[route.method](path, FiltersMiddleware(Ctr, handlersChain, this.globalFilters))
       })
     }
   }

@@ -1,9 +1,4 @@
-export {
-  type TypeTransform,
-  Injectable,
-  UsePipes,
-  CanActivate,
-  UseGuards
-} from './decorators'
+export * from './decorators'
 export { Module } from '@core/decorators/module'
 export * from './exceptions'
+export { ArgumentHost } from '@core/types';

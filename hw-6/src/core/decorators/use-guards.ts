@@ -40,18 +40,13 @@ export async function runGuards(
   const guards: GuardType[] = getGuards(handler, controllerClass, globalGuards)
 
   for (const GuardCtor of guards) {
-    try {
-      if (!container.isRegistered(GuardCtor)) container.register(GuardCtor, GuardCtor);
+    if (!container.isRegistered(GuardCtor)) container.register(GuardCtor, GuardCtor);
 
-      const guardInstance = container.resolve(GuardCtor);
-      const ctx = new ExpressExecutionContext(controllerClass, handler, req, res)
+    const guardInstance = container.resolve(GuardCtor);
+    const ctx = new ExpressExecutionContext(controllerClass, handler, req, res)
 
-      const can = await Promise.resolve( guardInstance.canActivate(ctx) )
-      if (!can) return GuardCtor.name
-    } catch (err) {
-      console.error(`Guard ${GuardCtor.name} threw an error:`, err)
-      throw err
-    }
+    const can = await Promise.resolve( guardInstance.canActivate(ctx) )
+    if (!can) return GuardCtor.name
   }
   return true
 }

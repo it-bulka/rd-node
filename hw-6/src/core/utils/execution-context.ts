@@ -1,13 +1,16 @@
 import { ExecutionContext } from '@core/types'
 import { Request, Response } from 'express'
+import { ArgumentHostContext } from './argument-host-context';
 
-export class ExpressExecutionContext implements ExecutionContext {
+export class ExpressExecutionContext extends ArgumentHostContext implements ExecutionContext {
   constructor(
     private readonly targetClass: Function,
     private readonly targetHandler: Function,
-    private readonly req: Request,
-    private readonly res: Response,
-  ) {}
+    req: Request,
+    res: Response,
+  ) {
+    super(req, res)
+  }
 
   getClass(): Function {
     return this.targetClass;
@@ -15,12 +18,5 @@ export class ExpressExecutionContext implements ExecutionContext {
 
   getHandler(): Function {
     return this.targetHandler;
-  }
-
-  switchToHttp() {
-    return {
-      getRequest: () => this.req,
-      getResponse: () => this.res,
-    };
   }
 }

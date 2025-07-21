@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Param, Body, UseGuards } from '@core/decorators'
+import { Controller, Get, Post, Param, Body, UseGuards, UseFilters } from '@core/decorators'
 import { FilmService } from './film.service'
 import { FilmSchema } from './dto/film.dto';
 
 import { ZodValidationPipe } from '../shared/pipes';
 import { AuthGuard } from '../shared/guards';
+import { MyExceptionFilter } from '../shared/filters';
 
+@UseFilters(MyExceptionFilter)
 @Controller('/films')
 export class FilmController {
   constructor(private filmService: FilmService) {}
