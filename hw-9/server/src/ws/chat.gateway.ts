@@ -10,21 +10,14 @@ import { WsService } from './ws.service';
 import { OnModuleDestroy, OnModuleInit  } from '@nestjs/common';
 import { Socket, Server  } from 'socket.io';
 import { MessagesService } from '@/messages/messages.service';
-import { ChatDTO } from '@/dto';
-import { Subject, filter } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import {v4 as uuid} from 'uuid';
 import Redis from 'ioredis';
-import { raw } from 'express';
+import { ChatEvent, WS_EVENTS } from '@/events/types';
+import { EventsService } from '@/events/events.service';
+import { ChatsService } from '@/chats/chats.service';
 
 const INSTANCE_ID = uuid();
-enum WS_EVENTS {
-  JOIN = 'join',
-  LEAVE = 'leave',
-  SEND = 'send',
-  TYPING = 'typing',
-  CHAT_CREATED = 'chatCreated',
-  MEMBERS_UPDATED = 'membersUpdated',
-}
 
 @WebSocketGateway({ path: '/ws', cors: true })
 export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy, OnGatewayConnection, OnGatewayDisconnect {
@@ -32,22 +25,25 @@ export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy
   server: Server;
 
   private sub: Redis
-  private event$ = new Subject<{ ev: WS_EVENTS; data: any; meta?: any }>()
+  private event$: Observable<ChatEvent>
 
   constructor(
     private readonly wsService: WsService,
     private readonly messagesService: MessagesService,
-    private readonly redis: Redis
-  ) {}
+    private readonly redis: Redis,
+    private readonly eventsService: EventsService,
+    private readonly chatsService: ChatsService
+  ) {
+    this.event$ = eventsService.getEvent()
+  }
 
   onModuleInit() {
     this.sub = this.redis.duplicate()
     this.sub.subscribe('chat-events')
     this.sub.on('message', (_, raw) => {
       const msg = JSON.parse(raw);
-      console.log('msg', msg)
       if(msg.src === INSTANCE_ID) return
-      this.event$.next(msg);
+      this.eventsService.onPubSubNext(msg);
     })
 
     this.event$
@@ -60,12 +56,9 @@ export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy
         }));
       })
 
-    this.event$
-      .subscribe((event) => {
-      const { data } = event;
-      this.server.to(data.chatId).emit(data)
-    })
+    this.event$.subscribe(event => this.wsService.handleEventsSubscription(event));
   }
+
   afterInit(server: Server) {
     this.wsService.setSocketServer(this.server);
   }
@@ -95,29 +88,18 @@ export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy
     @ConnectedSocket() client: Socket,
     @MessageBody() body: { chatId: string }
   ) {
-    console.log('onJoin', body)
     await client.join(body.chatId)
-    const room = this.server.sockets.adapter.rooms.get(body.chatId);
-    console.log('onJoin Sockets in room', room);
-
-    this.event$.next({
-      ev: WS_EVENTS.JOIN,
-      data: { chatId: body.chatId },
-      meta: { local: true }
-    })
+    this.eventsService.onJoinNext(body.chatId)
   }
 
   @SubscribeMessage(WS_EVENTS.LEAVE)
-  onLeave(
+  async onLeave(
     @ConnectedSocket() client: Socket,
     @MessageBody() body: { chatId: string }
   ) {
+    await this.chatsService.manageChatMembers(body.chatId, { remove: [client.data.user]})
     client.leave(body.chatId)
-    this.event$.next({
-      ev: WS_EVENTS.JOIN,
-      data: { chatId: body.chatId },
-      meta: { local: true }
-    })
+    this.eventsService.onLeaveNext(body.chatId)
   }
 
   @SubscribeMessage(WS_EVENTS.SEND)
@@ -126,14 +108,10 @@ export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy
     @MessageBody() body: { chatId: string, text: string }
   ) {
     const msg = await this.messagesService.create(body.chatId, {
-      author: client.data.user, //TODO: name || ID ?
+      author: client.data.user,
       text: body.text
     })
-    this.event$.next({
-      ev: WS_EVENTS.SEND,
-      data: msg,
-      meta: { local: true }
-    })
+    this.eventsService.onSendMessageNext(msg);
   }
 
   @SubscribeMessage(WS_EVENTS.TYPING)
@@ -143,14 +121,10 @@ export class ChatGateway implements OnGatewayInit, OnModuleInit, OnModuleDestroy
   ) {
     const data = {
       chatId: body.chatId,
-      user: client.data.userId,
+      user: client.data.user,
       isTyping: body.isTyping
     }
 
-    this.event$.next({
-      ev: WS_EVENTS.TYPING,
-      data,
-      meta: { local: true }
-    })
+    this.eventsService.onTypingNext(data)
   }
 }

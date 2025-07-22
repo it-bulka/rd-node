@@ -13,7 +13,7 @@ export class ChatsService {
   async createChat(creator: string, { name, members }: Pick<ChatDTO, 'members'> & { name?: string }) {
     let chatName = name
     const allMembers = [...members, creator];
-    console.log('members', members)
+
     if(!name && allMembers.length === 2) {
       chatName = await this.generateChatNameForTwo(allMembers)
     };
@@ -22,7 +22,7 @@ export class ChatsService {
       members: allMembers,
       updatedAt: new Date().toISOString(),
     })
-    console.log('createdChat', createdChat)
+
     return createdChat
   }
 

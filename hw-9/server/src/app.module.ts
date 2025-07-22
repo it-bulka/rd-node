@@ -6,6 +6,7 @@ import { ChatsModule } from './chats/chats.module';
 import { MessagesModule } from '@/messages/messages.module';
 import { WsModule } from './ws/ws.module';
 import { RedisModule } from '@/redis/redis.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { RedisModule } from '@/redis/redis.module';
     UsersModule,
     ChatsModule,
     MessagesModule,
-    WsModule
+    WsModule,
+    EventsModule
   ],
   controllers: [],
   providers: [],

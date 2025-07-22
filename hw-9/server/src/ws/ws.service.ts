@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ChatDTO } from '@/dto';
-import { Subject } from 'rxjs';
+import { ChatEvent, WS_EVENTS } from '@/events/types';
 
+type TraversedSocket = { socketId: string, socket: Socket | undefined }
 
 @Injectable()
 export class WsService {
   private server: Server;
-  private userSockets = new Map<string, Set<string>>();constructor() {}
+  private userSockets = new Map<string, Set<string>>();
+
+  constructor() {}
 
   setSocketServer(socketServer: Server): void {
     console.log('[WS] Server injected:', !!socketServer)
@@ -31,25 +33,51 @@ export class WsService {
     }
   }
 
-  sendMessageToUser(userId: string, event: string, payload: any) {
+  traverseUserSockets(userId: string, cb: (arg: TraversedSocket) => void) {
     const sockets = this.userSockets.get(userId);
     if (!sockets || !this.server) return;
 
     for (const socketId of sockets) {
-      this.server.to(socketId).emit(event, payload);
+      const socket = this.server.sockets.sockets.get(socketId)
+      cb({ socketId, socket });
     }
   }
 
-  notifyMembersUpdated(chatId: string, payload: { chatId: string, members: string[] }) {
-    console.log('notifyMembersUpdated [WS] Server injected:', !!chatId);
-    const room = this.server.sockets.adapter.rooms.get(chatId);
-    console.log(`Sockets in room ${chatId}:`, room);
-    this.server.to(chatId).emit('membersUpdated', payload);
-    console.log('Rooms at set time:', Array.from(this.server.sockets.adapter.rooms.entries()));
+  broadcast(chatId: string, ev: string, data: any): void {
+    this.server.to(chatId).emit(ev, data)
   }
 
-  notifyChatCreated(userId: string, payload: ChatDTO) {
-    this.sendMessageToUser(userId, 'chatCreated', payload);
+  notifyAll(userIds: string[], event: string, payload: any) {
+    userIds.forEach((member) => {
+      this.traverseUserSockets(member, ({ socket }) => socket?.emit(event, payload))
+    })
   }
 
+  notifyMembersUpdated(payload: { chatId: string, members: string[] }) {
+    this.notifyAll(payload.members, 'membersUpdated', payload)
+  }
+
+  notifyChatCreated(payload: ChatDTO) {
+    const joinToRoom = ({ socket }: TraversedSocket) => {
+      socket?.join(payload.id);
+      socket?.emit('chatCreated', payload);
+    }
+
+    payload.members.forEach((member) => {
+      this.traverseUserSockets(member, joinToRoom)
+    })
+  }
+
+  handleEventsSubscription(arg: ChatEvent) {
+    const { ev, data } = arg
+    switch (ev) {
+      case WS_EVENTS.CHAT_CREATED:
+        return this.notifyChatCreated(data);
+      case WS_EVENTS.MEMBERS_UPDATED:
+        return this.notifyMembersUpdated(data)
+
+      default:
+        return this.broadcast(data.chatId, ev, data)
+    }
+  }
 }

@@ -13,13 +13,13 @@ import { ChatsService } from './chats.service';
 import { ChatBodyDTO, ChatMenageMembersDTO } from './dto';
 import { ChatNamePipe } from '@/chats/pipes/chatName.pipe';
 import { RoleGuard } from '@/shared/guards';
-import { WsService } from '@/ws/ws.service';
+import { EventsService } from '@/events/events.service';
 
 @Controller('chats')
 export class ChatsController {
   constructor(
     private readonly chatsService: ChatsService,
-    private readonly wsService: WsService,
+    private readonly eventsService: EventsService,
   ) {}
 
   @UseGuards(RoleGuard('creator'))
@@ -29,7 +29,7 @@ export class ChatsController {
     @Req() req: any
   ) {
     const chat = await this.chatsService.createChat(req.user, body)
-    this.wsService.notifyChatCreated(req.user, chat)
+    this.eventsService.onChatCreatedNext(chat);
 
     return {
       id: chat.id,
@@ -55,8 +55,7 @@ export class ChatsController {
     if (!chat) {
       throw new InternalServerErrorException()
     }
-    console.log('notifyMembersUpdated', chat)
-    this.wsService.notifyMembersUpdated(chat.id, { chatId: chat.id, members: chat.members })
+    this.eventsService.onMembersUpdatedNext({ chatId: chat.id, members: chat.members })
     return chat
   }
 

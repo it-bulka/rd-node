@@ -112,10 +112,7 @@ export class ChatService {
     ws.on('message',        (m: MessageDTO) => this.message$.next(m));
     ws.on('typing',         (t) => this.typing$.next(t));
     ws.on('chatCreated',    (c: ChatDTO) => this.chatCreated$.next(c));
-    ws.on('membersUpdated', (u) => {
-      console.log('membersUpdated', u)
-      this.membersUpdated$.next(u)
-    });
+    ws.on('membersUpdated', (u) => this.membersUpdated$.next(u));
 
     /* ② логіка reconnection */
     ws.on('reconnect', (_attempt) => {

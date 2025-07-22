@@ -9,7 +9,6 @@ export function RoleGuard(roles: Roles | Roles[]): Type<CanActivate> {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
       const req = context.switchToHttp().getRequest<Request>();
       const xUser = req.headers['x-user']
-      console.log('xUser', xUser)
 
       const hasRoles = Array.isArray(roles) ? roles.length > 0 : !!roles;
       if(hasRoles && (!xUser || typeof xUser !== 'string')) {
