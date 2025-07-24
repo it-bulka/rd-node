@@ -5,8 +5,11 @@ import rateLimit from 'express-rate-limit';
 import compression from 'compression'
 import { zipController } from '@/controllers/zip.controller';
 import { upload } from '@/utils/multer';
+import { validateFilesExist, errorHandler, notFound } from '@/middleware';
+import { setLogger } from '@/utils';
+import { config } from '@/config';
 
-export const createApp = () => {
+export const createApp = async () => {
   const app = express()
 
   app.use(helmet())
@@ -19,7 +22,11 @@ export const createApp = () => {
   }))
   app.use(compression())
 
-  app.post('/zip', upload.array('zip'), zipController.post)
+  await setLogger(app, config.env)
+
+  app.post('/zip', upload.array('zip'), validateFilesExist, zipController.post)
+  app.use(notFound)
+  app.use(errorHandler)
 
   return app
 }

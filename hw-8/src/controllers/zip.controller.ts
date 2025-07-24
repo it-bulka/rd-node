@@ -1,8 +1,35 @@
 import { Request, Response} from 'express';
+import path from 'path';
+import * as crypto from 'node:crypto';
+import { unzip, removeDir } from '@/utils';
+import { traverseFiles } from '@/utils';
+import { runWorker } from '@/utils/runWorker';
 
 class ZipController {
-  post(req: Request, res: Response) {
-    const filePath = req.file?.path
+  async post(req: Request, res: Response) {
+    const files = req.files as Express.Multer.File[];
+    if (!files) return res.status(400).json({ error: 'No file uploaded' });
+
+    const requestId = crypto.randomUUID();
+    const tempDir = path.join('uploads/temp', requestId);
+
+    for (const file of files) {
+      const originalPath = file.path;
+      unzip(originalPath, tempDir);
+    }
+
+    const filesPaths = await traverseFiles(tempDir)
+    try {
+      const t0 = performance.now()
+      const state = await runWorker(filesPaths)
+      await removeDir(tempDir)
+      return res.json({
+        processed: state.processed,
+        skipped: state.skipped,
+        durationMs: performance.now() - t0 });
+    } catch(err) {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
 
   }
 }

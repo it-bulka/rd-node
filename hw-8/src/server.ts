@@ -1,8 +1,8 @@
 import http from 'node:http'
 import { createApp } from '@/app';
 
-const bootstrap = () => {
-  const app = createApp()
+const bootstrap = async () => {
+  const app = await createApp()
   const server = http.createServer(app)
 
   const PORT = process.env.PORT || 3000
