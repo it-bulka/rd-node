@@ -53,7 +53,7 @@ This project accepts a zip archive containing images, unpacks it, generates thum
 
 ``` bash
     curl -X POST http://localhost:3000/zip \
-      -F "file=@path/to/your/images.zip"
+      -F "zip=@path/to/your/images.zip"
 ```
 
 
