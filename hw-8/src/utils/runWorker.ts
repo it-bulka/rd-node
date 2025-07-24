@@ -2,11 +2,20 @@ import { Worker } from 'node:worker_threads';
 import { withMutex } from '@/utils/index';
 import { SharedState, WorkerMsgState } from '@/types';
 import { config } from '@/config';
+import os from 'node:os';
+import pLimit from 'p-limit'
 
-const state: SharedState = { processed: 0, skipped: 0 };
+const maxWorkers = (os.availableParallelism?.() ?? os.cpus().length) || 1;
+const limit = pLimit(maxWorkers);
 
-export async function runWorker(filePaths: string[]): Promise<SharedState>{
+export async function runMainWorker(filePaths: string[]): Promise<SharedState>{
+  const state: SharedState = { processed: 0, skipped: 0 };
+
   const workerPromises = filePaths.map((filePath) => {
+    return limit(() => runOneWorker(filePath))
+  });
+
+  function runOneWorker(filePath: string) {
     return new Promise((resolve, reject) => {
       const worker = getWorker({ filePath });
       worker.on('message', async (msg: { status: WorkerMsgState}) => {
@@ -21,7 +30,7 @@ export async function runWorker(filePaths: string[]): Promise<SharedState>{
         else resolve(null);
       });
     })
-  });
+  }
 
   return Promise.all(workerPromises).then(() => state);
 }

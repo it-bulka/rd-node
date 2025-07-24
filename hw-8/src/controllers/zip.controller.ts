@@ -3,7 +3,7 @@ import path from 'path';
 import * as crypto from 'node:crypto';
 import { unzip, removeDir } from '@/utils';
 import { traverseFiles } from '@/utils';
-import { runWorker } from '@/utils/runWorker';
+import { runMainWorker } from '@/utils/runWorker';
 
 class ZipController {
   async post(req: Request, res: Response) {
@@ -21,7 +21,7 @@ class ZipController {
     const filesPaths = await traverseFiles(tempDir)
     try {
       const t0 = performance.now()
-      const state = await runWorker(filesPaths)
+      const state = await runMainWorker(filesPaths)
       await removeDir(tempDir)
       return res.json({
         processed: state.processed,
