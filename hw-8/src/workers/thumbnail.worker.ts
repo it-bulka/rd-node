@@ -10,7 +10,6 @@ async function runThumbnailWorker(){
     await convertToThumbnail(filePath)
     parentPort?.postMessage({ status: 'processed' })
   } catch (e) {
-    console.error('[Worker error]', e)
     parentPort?.postMessage({ status: 'skipped' })
   }
 
