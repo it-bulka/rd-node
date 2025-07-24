@@ -1,15 +1,16 @@
 import path from "path";
 import sharp from 'sharp';
 import { workerData, parentPort } from 'node:worker_threads';
-import { config } from '@/config';
+import fs from 'node:fs'
 
 async function runThumbnailWorker(){
-  const { filePath } = getWorkerData()
+  const { filePath } = workerData
 
   try {
     await convertToThumbnail(filePath)
     parentPort?.postMessage({ status: 'processed' })
   } catch (e) {
+    console.error('[Worker error]', e)
     parentPort?.postMessage({ status: 'skipped' })
   }
 
@@ -22,25 +23,13 @@ async function convertToThumbnail(filePath: string) {
   const previewName = `${filename}-thumb.webp`;
   const previewPath = path.join('uploads/thumbs', previewName);
 
+  const dir = path.dirname(previewPath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
   await sharp(filePath)
     .resize(150, 150)
     .toFormat('webp')
     .toFile(previewPath);
 
   return previewPath;
-}
-
-// WORKAROUND for .ts ext for workers
-function getWorkerData (){
-  /*if(config.env === 'development') {
-    return JSON.parse(process.argv[2]);
-  }
-
-  if(config.env === 'production') {
-    return workerData
-  }
-
-  throw new Error('Workers extension Not supported');*/
-
-  return workerData
 }

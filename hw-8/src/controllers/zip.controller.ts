@@ -16,13 +16,14 @@ class ZipController {
     for (const file of files) {
       const originalPath = file.path;
       unzip(originalPath, tempDir);
+      await removeDir(originalPath);
     }
 
     const filesPaths = await traverseFiles(tempDir)
     try {
       const t0 = performance.now()
       const state = await runMainWorker(filesPaths)
-      await removeDir(tempDir)
+      await removeDir(tempDir); console.log('tempDir', tempDir)
       return res.json({
         processed: state.processed,
         skipped: state.skipped,
