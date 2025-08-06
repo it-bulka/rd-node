@@ -1,0 +1,13 @@
+{
+  "name": "kafka-monorepo",
+  "version": "1.0.0",
+  "workspaces": [
+    "notification-service",
+    "logger-service"
+  ],
+  "scripts": {
+    "start:notification": "nest start --watch --cwd ./notification-service",
+    "start:logger": "nest start --watch --cwd ./logger-service",
+    "start:retry-worker": "nest start --watch --cwd ./retry-worker"
+  }
+}
