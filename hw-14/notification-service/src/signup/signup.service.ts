@@ -10,7 +10,13 @@ export class SignupService implements OnModuleInit, OnApplicationShutdown {
   ) {}
 
   async onModuleInit() {
-    await this.kafka.connect();
+    console.log('wORK');
+    try {
+      await this.kafka.connect();
+      console.log('Kafka connected');
+    } catch (err) {
+      console.error('Kafka connection failed:', err.message);
+    }
   }
 
   async onApplicationShutdown() {

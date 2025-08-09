@@ -6,8 +6,12 @@
     "logger-service"
   ],
   "scripts": {
-    "start:notification": "nest start --watch --cwd ./notification-service",
-    "start:logger": "nest start --watch --cwd ./logger-service",
-    "start:retry-worker": "nest start --watch --cwd ./retry-worker"
+    "start:notification": "npm run start:dev --prefix ./notification-service",
+    "start:logger": "npm run start:dev --prefix ./logger-service",
+    "start:docker": "docker-compose up -d",
+    "start": "npm run start:docker && concurrently --kill-others-on-fail --prefix [{name}] \"npm run start:notification\" \"npm run start:logger\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
   }
 }
