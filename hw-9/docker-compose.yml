@@ -1,5 +1,3 @@
-version: "3.9"
-
 networks:
   chatnet:                # єдина bridge‑мережа для всіх сервісів
     driver: bridge
@@ -17,11 +15,14 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379
       - PORT=3000
+      - NODE_ENV=development
     depends_on: [redis]
     expose: ["3000"]      # лишаємо лише expose, бо LB слухає всередині
     volumes:
       - ./server:/app
       - /app/node_modules
+      - shared-db:/app/db
+      - static_data:/app/public  # /static - just proxy path; /public - real path to static
     networks:
       chatnet:
         aliases:
@@ -43,3 +44,7 @@ services:
       - "80:80"           # для хоста
     depends_on: [server, client]
     networks: [chatnet]
+
+volumes:
+  shared-db:
+  static_data:

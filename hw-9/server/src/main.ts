@@ -25,7 +25,7 @@ async function bootstrap() {
         { path: 'static', method: RequestMethod.GET }
       ],
     });
-  app.useStaticAssets(join(__dirname, STATIC_FOLDER_NAME), {
+  app.useStaticAssets(join(__dirname, '..', STATIC_FOLDER_NAME), {
     prefix: '/' + STATIC_FOLDER_PREFIX,
   })
 

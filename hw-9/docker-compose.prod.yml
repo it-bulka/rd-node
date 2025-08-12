@@ -1,0 +1,8 @@
+services:
+  server:
+    build: ./server
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - shared-db:/app/db
+      - static_data:/app/public

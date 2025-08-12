@@ -1,13 +1,14 @@
 # ---------- shared deps ----------
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml* ./
-RUN npm i -g pnpm && pnpm i --frozen-lockfile --dev
+RUN npm i -g pnpm && pnpm i --frozen-lockfile --prod=false
 
 # ---------- dev stage ----------
 FROM deps AS dev
 WORKDIR /app
 COPY . .
+COPY --from=deps /app/node_modules ./node_modules
 EXPOSE 3000
 CMD ["pnpm", "start:dev"]
 

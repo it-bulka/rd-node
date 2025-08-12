@@ -24,11 +24,10 @@ export class UsersService {
 
       const ext = path.extname(file.originalname);
       const uniq_filename = Date.now().toString() + ext;
-      const BASE_URL = this.configService.getOrThrow('BASE_URL')
 
       await saveFile(storageDir, uniq_filename, file.buffer)
 
-      return `${BASE_URL}/${publicDir}/${uniq_filename}`
+      return `/${publicDir}/${uniq_filename}`
     } catch (e) {
       console.log('Failed to store user icon: ',e)
       throw new BadRequestException('Failed to store user icon', { cause: e });
