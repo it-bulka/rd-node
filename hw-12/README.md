@@ -14,7 +14,7 @@
 ```bash
   npm run seed
 ```
-- **NOTE:** with seed you will have to accounts to initially test request
+- **NOTE:** with seed you will have 2 accounts to initially test request
 
 ### Run tests
 ```bash
