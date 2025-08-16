@@ -6,7 +6,7 @@ export const brewDto = z.object({
   method: z.enum(['v60', 'aeropress', 'chemex', 'espresso']),
   rating: z.number().min(1).max(5).optional(),
   notes: z.string().min(1).max(200).optional(),
-  brewedAt: z.date().optional().default(() => new Date()),
+  brewedAt: z.coerce.date().optional().default(() => new Date()),
 })
 
 const brewFull = brewDto.extend({

@@ -26,6 +26,7 @@ export class BrewsController {
   }
 
   create: Controller<any,ResponseBody<BrewFull>, BrewDto> = (req, res) => {
+    console.log('req.body', JSON.stringify(req.body, null, 2))
     const brew = this.brewsService.createOne(req.body)
     return res.status(201).json({ success: true, data: brew })
   }

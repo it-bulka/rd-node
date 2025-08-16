@@ -64,10 +64,11 @@ registry.registerPath({
     body: {required: true, content: {'application/json': {schema: brewDto}}}
   },
   responses: {
-    200: {
+    201: {
       description: 'Created Brew',
       content: {'application/json': {schema: BrewSuccess }}
-    }
+    },
+    400: {description: 'Validation error'},
   }
 
 })
@@ -126,6 +127,7 @@ registry.registerPath({
       description: 'Deleted Brew',
       content: {'application/json': {schema: BrewSuccess }}
     },
+    400: {description: 'Validation error'},
     404: {
       description: 'Brew Not Found',
       content: {'application/json': {schema: BrewError }}
