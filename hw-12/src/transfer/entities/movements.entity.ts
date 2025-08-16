@@ -1,18 +1,19 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn
+  Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, Check
 } from 'typeorm';
 import { Account } from './account.entity';
 
-@Entity('movements')
+@Entity()
+@Check('amount > 0')
 export class Movement {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Account)
+  @ManyToOne(() => Account, { onDelete: "RESTRICT" })
   @JoinColumn({ name: 'from_id' })
   from: string;
 
-  @ManyToOne(() => Account)
+  @ManyToOne(() => Account, { onDelete: "RESTRICT" })
   @JoinColumn({ name: 'to_id' })
   to: string;
 

@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, Check } from 'typeorm'
 
 @Entity()
+@Check('balance >= 0')
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   id: string;
