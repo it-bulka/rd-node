@@ -126,7 +126,10 @@ registry.registerPath({
       description: 'Deleted Brew',
       content: {'application/json': {schema: BrewSuccess }}
     },
-    400: {description: 'Validation error'},
+    404: {
+      description: 'Brew Not Found',
+      content: {'application/json': {schema: BrewError }}
+    }
   }
 })
 

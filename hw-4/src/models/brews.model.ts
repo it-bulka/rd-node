@@ -21,8 +21,7 @@ export class BrewsModel {
   }
 
   delete(id:string){
-    this.#store.delete(id)
-    return true
+    return this.#store.delete(id)
   }
 
   create(dto: BrewDto): BrewFull {
