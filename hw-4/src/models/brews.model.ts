@@ -47,7 +47,11 @@ export class BrewsModel {
     const filterFn = (brew: BrewFull) => {
       let match = true
       for (const [fKey, fValue] of filtersList) {
-        match = brew[fKey] === fValue
+        if(fKey === 'rating') {
+          match = Number(brew[fKey]) >= Number(fValue)
+        } else {
+          match = brew[fKey] === fValue
+        }
 
         if (!match) break
       }
