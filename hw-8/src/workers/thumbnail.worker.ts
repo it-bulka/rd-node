@@ -4,10 +4,10 @@ import { workerData, parentPort } from 'node:worker_threads';
 import fs from 'node:fs'
 
 async function runThumbnailWorker(){
-  const { filePath } = workerData
+  const { filePath, dirForConvertedFiles } = workerData
 
   try {
-    await convertToThumbnail(filePath)
+    await convertToThumbnail(filePath, dirForConvertedFiles)
     parentPort?.postMessage({ status: 'processed' })
   } catch (e) {
     parentPort?.postMessage({ status: 'skipped' })
@@ -16,11 +16,11 @@ async function runThumbnailWorker(){
 }
 runThumbnailWorker()
 
-async function convertToThumbnail(filePath: string) {
+async function convertToThumbnail(filePath: string, dirForConvertedFiles: string) {
   const filename = path.parse(filePath).name;
 
-  const previewName = `${filename}-thumb.webp`;
-  const previewPath = path.join('uploads/thumbs', previewName);
+  const previewName = `${filename}.webp`;
+  const previewPath = path.join(dirForConvertedFiles, previewName);
 
   const dir = path.dirname(previewPath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });

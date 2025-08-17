@@ -12,6 +12,7 @@ class ZipController {
 
     const requestId = crypto.randomUUID();
     const tempDir = path.join('uploads/temp', requestId);
+    const dirForConvertedFiles = path.join('uploads/thumbs', requestId);
 
     for (const file of files) {
       const originalPath = file.path;
@@ -22,7 +23,7 @@ class ZipController {
     const filesPaths = await traverseFiles(tempDir)
     try {
       const t0 = performance.now()
-      const state = await runMainWorker(filesPaths)
+      const state = await runMainWorker(filesPaths, dirForConvertedFiles)
       await removeDir(tempDir); console.log('tempDir', tempDir)
       return res.json({
         processed: state.processed,

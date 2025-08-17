@@ -8,7 +8,7 @@ import pLimit from 'p-limit'
 const maxWorkers = (os.availableParallelism?.() ?? os.cpus().length) || 1;
 const limit = pLimit(maxWorkers);
 
-export async function runMainWorker(filePaths: string[]): Promise<SharedState>{
+export async function runMainWorker(filePaths: string[], dirForConvertedFiles: string): Promise<SharedState>{
   const state: SharedState = { processed: 0, skipped: 0 };
 
   const workerPromises = filePaths.map((filePath) => {
@@ -17,7 +17,7 @@ export async function runMainWorker(filePaths: string[]): Promise<SharedState>{
 
   function runOneWorker(filePath: string) {
     return new Promise((resolve, reject) => {
-      const worker = getWorker({ filePath });
+      const worker = getWorker({ filePath, dirForConvertedFiles });
       worker.on('message', async (msg: { status: WorkerMsgState}) => {
         await withMutex(() => {
           if (msg.status === 'processed') state.processed++;
