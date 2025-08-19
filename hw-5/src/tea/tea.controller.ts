@@ -91,7 +91,6 @@ export class TeaController {
   }
 
   @Patch(':id')
-  @UsePipes(new ZodValidationPipe(UpdateTeaSchema))
   @ApiSecurity('x-api-key')
   @ApiBody({ type: UpdateTeaDtoSwagger })
   @ApiParam(ApiParamIdSwagger)
@@ -101,7 +100,10 @@ export class TeaController {
   })
   @ApiNotFoundResponse({ description: 'Tea not found' })
   @ApiBadRequestResponse(zodValidationError)
-  async update(@Param('id') id: string, @Body() tea: UpdateTeaDTO) {
+  async update(
+    @Param('id') id: string,
+    @Body(new ZodValidationPipe(UpdateTeaSchema)) tea: UpdateTeaDTO
+  ) {
     const data = await this.teaService.update(id, tea);
 
     if (!data) {
@@ -114,6 +116,16 @@ export class TeaController {
   @ApiSecurity('x-api-key')
   @ApiParam(ApiParamIdSwagger)
   @ApiOkResponse({ description: 'Tea deleted successfully' })
+  @ApiNotFoundResponse({
+    description: 'Tea not found',
+    schema: {
+      example: {
+        message: 'Tea with id not found.',
+        error: 'Not Found',
+        statusCode: 404,
+      },
+    },
+  })
   async delete(@Param('id') id: string) {
     await this.teaService.deleteById(id);
   }

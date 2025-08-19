@@ -1,7 +1,7 @@
 import {
   BadRequestException,
-  Injectable,
-  OnApplicationShutdown,
+  Injectable, NotFoundException,
+  OnApplicationShutdown
 } from '@nestjs/common';
 import { CreateTeaDto } from './dto/create-tea.dto';
 import { UpdateTeaDTO } from './dto/update-tea.dto';
@@ -56,7 +56,12 @@ export class TeaService implements OnApplicationShutdown {
   }
 
   async deleteById(id: string) {
-    return this.teaEntity.delete(id);
+    const deletedItem = this.teaEntity.delete(id);
+    if(!deletedItem) {
+      throw new NotFoundException(`Tea with id ${id} not found.`);
+    }
+
+    return deletedItem
   }
 
   _filterByRating(list: Tea[], minRating: number) {
@@ -73,7 +78,7 @@ export class TeaService implements OnApplicationShutdown {
     }
 
     const skip = (page - 1) * pageSize;
-    const startIndex = skip + 1;
+    const startIndex = skip;
     const endIndex = skip + pageSize;
 
     const data = list.slice(startIndex, endIndex);
