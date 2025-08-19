@@ -1,0 +1,61 @@
+name: 'Build and Push Docker'
+description: 'Build project in hw-15 and push Docker image to GHCR'
+
+inputs:
+  node-version:
+    description: 'Node.js version'
+    required: false
+    default: '18'
+  directory:
+    description: 'Subdirectory with project'
+    required: true
+
+outputs:
+  image:
+    description: 'Docker image name that was pushed'
+    value: ${{ steps.build-docker.outputs.image }}
+
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Checkout repository'
+      uses: actions/checkout@v4
+
+    - name: 'Setup Node.js'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: 'Install dependencies'
+      shell: bash
+      run: npm ci
+      working-directory: ${{ inputs.directory }}
+
+    - name: 'Build project'
+      shell: bash
+      run: npm run build
+      working-directory: ${{ inputs.directory }}
+
+    - name: 'Build Docker image'
+      shell: bash
+      run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ github.sha }}
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+          docker build -t $IMAGE_NAME ${{ inputs.directory }}
+
+    - name: 'Login to GHCR'
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 'Push Docker image'
+      shell: bash
+      run: docker push ${{ env.IMAGE_NAME }}
+
+    - name: 'Set output'
+      id: build-docker
+      shell: bash
+      run: 'echo "image=${{ env.IMAGE_NAME }}" >> $GITHUB_OUTPUT  '
