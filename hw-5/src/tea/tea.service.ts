@@ -3,11 +3,11 @@ import {
   Injectable, NotFoundException,
   OnApplicationShutdown
 } from '@nestjs/common';
-import { CreateTeaDto } from './dto/create-tea.dto';
-import { UpdateTeaDTO } from './dto/update-tea.dto';
+import { CreateTea } from './dto/create-tea.dto';
+import { UpdateTea } from './dto/update-tea.dto';
 import { TeaEntity } from './entities/tea.entity';
 import { Tea } from './schemas/tea.schema';
-import { QueryGetAllDto } from './dto/query-get-all.dto';
+import { QueryGetAll } from './dto/query-get-all.dto';
 import { ConsoleLogger } from '@nestjs/common';
 
 type PaginateArg = { list: Tea[]; pageSize?: number; page?: number };
@@ -33,7 +33,7 @@ export class TeaService implements OnApplicationShutdown {
     minRating,
     page,
     pageSize,
-  }: QueryGetAllDto = {}): Promise<PaginatedTea> {
+  }: QueryGetAll = {}): Promise<PaginatedTea> {
     let list = this.teaEntity.getAll();
 
     if (minRating) {
@@ -47,11 +47,11 @@ export class TeaService implements OnApplicationShutdown {
     return this.teaEntity.getById(id);
   }
 
-  async create(teaDto: CreateTeaDto) {
+  async create(teaDto: CreateTea) {
     return this.teaEntity.create(teaDto);
   }
 
-  async update(id: string, teaDto: UpdateTeaDTO) {
+  async update(id: string, teaDto: UpdateTea) {
     return this.teaEntity.updateById(id, teaDto);
   }
 

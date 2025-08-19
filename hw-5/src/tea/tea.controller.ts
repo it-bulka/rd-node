@@ -30,12 +30,9 @@ import { ZodValidationPipe } from '@pipes/zod-validation.pipe';
 import { AuthGuard } from '@guards/auth.guard';
 import { Public } from '../shared/decorators/public.decorator';
 import { QueryGetAllSchema, QueryGetAllDto } from './dto/query-get-all.dto';
+import { TeaDto } from './dto/tea.dto';
 import {
-  CreateTeaDtoSwagger,
-  UpdateTeaDtoSwagger,
-  QueryGetAllDtoSwagger,
   ApiParamIdSwagger,
-  TeaDtoSwagger,
   zodValidationError,
 } from '@docs/schemas';
 
@@ -48,9 +45,8 @@ export class TeaController {
   @Get()
   @Public()
   @UsePipes(new ZodValidationPipe(QueryGetAllSchema))
-  @ApiQuery({ type: QueryGetAllDtoSwagger })
   @ApiOkResponse({
-    type: [TeaDtoSwagger],
+    type: [TeaDto],
     description: 'Paginated and filtrated Tea list',
   })
   @ApiBadRequestResponse(zodValidationError)
@@ -65,7 +61,7 @@ export class TeaController {
   @Get(':id')
   @ApiSecurity('x-api-key')
   @ApiParam(ApiParamIdSwagger)
-  @ApiOkResponse({ type: TeaDtoSwagger, description: 'Founded Tea by ID' })
+  @ApiOkResponse({ type: TeaDto, description: 'Founded Tea by ID' })
   @ApiNotFoundResponse({ description: 'Tea not found' })
   async getById(@Param('id') id: string) {
     const data = await this.teaService.getById(id);
@@ -80,9 +76,9 @@ export class TeaController {
   @HttpCode(201)
   @UsePipes(new ZodValidationPipe(CreateTeaSchema))
   @ApiSecurity('x-api-key')
-  @ApiBody({ type: CreateTeaDtoSwagger })
+  @ApiBody({ type: CreateTeaDto })
   @ApiCreatedResponse({
-    type: TeaDtoSwagger,
+    type: TeaDto,
     description: 'Tea created successfully',
   })
   @ApiBadRequestResponse(zodValidationError)
@@ -92,10 +88,10 @@ export class TeaController {
 
   @Patch(':id')
   @ApiSecurity('x-api-key')
-  @ApiBody({ type: UpdateTeaDtoSwagger })
+  @ApiBody({ type: UpdateTeaDTO })
   @ApiParam(ApiParamIdSwagger)
   @ApiOkResponse({
-    type: TeaDtoSwagger,
+    type: TeaDto,
     description: 'Tea updated successfully',
   })
   @ApiNotFoundResponse({ description: 'Tea not found' })

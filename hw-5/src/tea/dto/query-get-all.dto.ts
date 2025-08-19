@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
 export const QueryGetAllSchema = z.object({
   minRating: z.coerce
@@ -15,4 +16,6 @@ export const QueryGetAllSchema = z.object({
     .optional(),
 });
 
-export type QueryGetAllDto = z.infer<typeof QueryGetAllSchema>;
+export type QueryGetAll = z.infer<typeof QueryGetAllSchema>;
+export class QueryGetAllDto extends createZodDto(QueryGetAllSchema) {}
+

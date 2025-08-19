@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createZodDto } from 'nestjs-zod';
 
 export const CreateTeaSchema = z.object({
   name: z.string().min(3).max(40),
@@ -8,4 +9,5 @@ export const CreateTeaSchema = z.object({
   notes: z.string().max(150).optional(),
 });
 
-export type CreateTeaDto = z.infer<typeof CreateTeaSchema>;
+export type CreateTea = z.infer<typeof CreateTeaSchema>;
+export class CreateTeaDto extends createZodDto(CreateTeaSchema) {}
