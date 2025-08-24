@@ -12,5 +12,5 @@ jobs:
       - name: 'Run reusable build-push action'
         uses: ./.github/actions/build-push
         with:
-          node-version: '18'
+          node-version: '20'
           directory: 'hw-15'

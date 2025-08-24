@@ -5,7 +5,7 @@ inputs:
   node-version:
     description: 'Node.js version'
     required: false
-    default: '18'
+    default: '20'
   directory:
     description: 'Subdirectory with project'
     required: true
