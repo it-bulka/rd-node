@@ -20,7 +20,10 @@ export function getTypeOrmConfig(configService?: ConfigService) {
     password: get('DB_PASSWORD', ''),
     database: get('DB_NAME', 'postgres'),
     entities: [Account, Movement, __dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: false
+    synchronize: false,
+    migrations: process.env.NODE_ENV === 'production'
+      ? ['dist/migrations/*.js']
+      : ['src/migrations/*.ts']
   };
 
   if (configService) {

@@ -15,12 +15,17 @@ services:
       - "pgdata:/var/lib/postgresql/data"
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     container_name: hw-15
     env_file:
       - ".env.template"
     ports:
       - "3000:3000"
+    volumes:
+      - ".:/app"
+      - "/app/node_modules"
     depends_on:
       - postgres
 
