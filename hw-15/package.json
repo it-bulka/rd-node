@@ -9,6 +9,7 @@
     "prepare": "npx husky install",
     "docker:prod": "docker compose --env-file .env.template up -d",
     "docker:dev": "docker compose -f docker-compose.dev.yml --env-file .env.template up -d",
+    "docker:app": "docker exec -it hw-15 sh",
     "build": "nest build",
     "schema:log": "typeorm-ts-node-commonjs schema:log -d ./src/config/data-source.ts",
     "schema:check": "ts-node ./scripts/schema-check.ts",
